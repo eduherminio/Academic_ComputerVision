@@ -1,0 +1,4 @@
+filename="0_FirstSteps"
+imagename="../Pictures/Parrots.jpg"
+imagename2=""
+imagename3=""
