@@ -11,7 +11,7 @@
 
 
 #include "opencv2/opencv.hpp"
-#include "./header_files/basic_operations.hpp"
+#include "./header/basic_operations.hpp"
 
 using namespace std;
 using namespace cv;
@@ -21,21 +21,15 @@ int main(int argc, char* argv[])
   Mat myPic, myPic_grey;
   string picName;
 
-  if(init_pic(argc, argv, picName, myPic) < 0)
-    return EXIT_FAILURE;
-
-  cout << "OpenCV version: " << CV_MAJOR_VERSION << "." << CV_MINOR_VERSION << endl;
-  // cout << "OpenCV: " << getBuildInformation();
+  if(init_pic(argc, argv, picName, myPic) < 0)    return EXIT_FAILURE;
 
   print_info(myPic, picName);
 
-  namedWindow("Example picture", WINDOW_AUTOSIZE);
-  imshow("Example picture", myPic);
-
+  show_pic(myPic, "Original picture");
   cvtColor(myPic, myPic_grey, CV_BGR2GRAY);
+  show_pic(myPic_grey, "Modified picture");
 
-  namedWindow("Modified picture", WINDOW_AUTOSIZE);
-  imshow("Modified picture", myPic_grey);
+  imwrite( "greyParrots.jpg", myPic_grey );        //graba img de gris en disco
 
   waitKey(0);
 

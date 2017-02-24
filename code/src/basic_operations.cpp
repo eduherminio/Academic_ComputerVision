@@ -10,24 +10,24 @@
  */
 
 
-#include "../header_files/basic_operations.hpp"
+#include "../header/basic_operations.hpp"
 
-int init_pic(int argc, char* argv[], string & strpicName, Mat & myPic) {
+int init_pic(int argc, char* argv[], std::string & strpicName, Mat & myPic) {
   if(argc != 2) {
-    cout<<"Missing picture name"<<endl;
+    std::cout<<"Missing picture name"<<std::endl;
     return -1;
   }
 
   myPic= imread( argv[1], CV_LOAD_IMAGE_UNCHANGED);
 
   if( myPic.empty())  {
-    cout<<"Error opening picture file "<<argv[1]<<endl;
+    std::cout<<"Error opening picture file "<<argv[1]<<std::endl;
     return -1;
   }
 
   char chpicName[CHL];
   strcpy(chpicName, argv[1]);
-  string picName(chpicName);
+  std::string picName(chpicName);
   strpicName= picName;
 
   int n= strpicName.find("Pictures/");
@@ -36,20 +36,64 @@ int init_pic(int argc, char* argv[], string & strpicName, Mat & myPic) {
   return 0;
 }
 
-void print_info(const Mat & myPic, const string & picName ) {
-  cout<<endl;
-  cout<< "Name:\t\t"    << picName          <<endl;
-  cout<< "Rows:\t\t"    << myPic.rows       <<endl;
-  cout<< "Columns:\t"   << myPic.cols       <<endl;
-  cout<< "Channels:\t"  << myPic.channels() <<endl;
-  cout<< "Type:\t\t";
+void print_info(const Mat & myPic, const std::string & picName ) {
 
-  if     (myPic.type() == CV_8UC1)  cout << "CV_8UC1"  << endl;
-  else if(myPic.type() == CV_8UC3)  cout << "CV_8UC3"  << endl;
-  else if(myPic.type() == CV_32FC1) cout << "CV_32FC1" << endl;
-  else if(myPic.type() == CV_32FC3) cout << "CV_32FC3" << endl;
-  else cout << "Unknown" << endl;
-  cout<<"Depth:\t\t"<< myPic.depth();
+  std::cout << "OpenCV version: " << CV_MAJOR_VERSION << "." << CV_MINOR_VERSION << std::endl;
+  // std::cout << "OpenCV: " << getBuildInformation();
 
-  cout<<endl;
+  std::cout<<std::endl;
+  std::cout<< "Name:\t\t"    << picName          <<std::endl;
+  std::cout<< "Rows:\t\t"    << myPic.rows       <<std::endl;
+  std::cout<< "Columns:\t"   << myPic.cols       <<std::endl;
+  std::cout<< "Channels:\t"  << myPic.channels() <<std::endl;
+  std::cout<< "Type:\t\t";
+
+  if     (myPic.type() == CV_8UC1)  std::cout << "CV_8UC1"  << std::endl;
+  else if(myPic.type() == CV_8UC3)  std::cout << "CV_8UC3"  << std::endl;
+  else if(myPic.type() == CV_32FC1) std::cout << "CV_32FC1" << std::endl;
+  else if(myPic.type() == CV_32FC3) std::cout << "CV_32FC3" << std::endl;
+  else std::cout << "Unknown" << std::endl;
+  std::cout<<"Depth:\t\t"<< myPic.depth();
+
+  std::cout<<std::endl;
+}
+
+
+void show_pic(const Mat & myPic)  {
+    std::cout<<"ss"<<std::endl;
+  std::string name(stringify(myPic));
+  namedWindow(name, WINDOW_AUTOSIZE);
+  imshow(name, myPic);
+}
+
+// void show_pic(const Mat & myPic, bool save)  {     // string in void show_pic(const Mat & myPic, std::string name) is interpreted as bool
+//     std::cout<<"ssff"<<std::endl;
+//   show_pic(myPic);
+//   if(save==true)
+//     save_pic(myPic);
+// }
+
+void show_pic(const Mat & myPic, std::string name) {
+  namedWindow(name, WINDOW_AUTOSIZE);
+  imshow(name, myPic);
+}
+
+void show_pic(const Mat & myPic, std::string name, bool save) {
+  namedWindow(name, WINDOW_AUTOSIZE);
+  imshow(name, myPic);
+  if(save==true)
+    save_pic(myPic, name);
+}
+
+void save_pic(const Mat& Pic) {
+  std::string newName(stringify(Pic));
+  newName += ".jpg";  // Fundamental to add the extension
+  imwrite(newName, Pic);
+}
+
+
+void save_pic(const Mat& Pic, std::string str) {
+  std::string newName(stringify(Pic));
+  newName += "_" + str + ".jpg";  // Fundamental to add the extension
+  imwrite(newName, Pic);
 }

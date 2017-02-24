@@ -10,19 +10,20 @@
  */
 
 
-#ifndef BASIC_OPERATIONS
-#define BASIC_OPERATIONS
+#ifndef CV_LIBRARY
+#define CV_LIBRARY
 
 #include "opencv2/opencv.hpp"
+#include "basic_operations.hpp"
 #include <iostream>
 #include <string>
-
-using namespace std;
+#include <utility>
 using namespace cv;
 
-#define CHL 100   // Char length
+#define stringify( name ) # name  // returns a string with the name of the variable
 
-int init_pic(int argc, char* argv[], string &, Mat & mypic);
-void print_info(const Mat & myPic, const string & picName);
+void manual_binarize(const Mat & myPic, const int threshold, const bool save);
+std::unique_ptr<Rect> light_rectangle(const Mat & myPic, const int threshold);
 
-#endif
+
+#endif // CV_LIBRARY

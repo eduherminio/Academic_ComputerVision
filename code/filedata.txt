@@ -1,4 +1,5 @@
-filename="0_FirstSteps"
-imagename="../Pictures/Parrots.jpg"
+filename="3_RGB"
+imagename="../../Pictures/colourful.jpg"
 imagename2=""
 imagename3=""
+imagename4=""
