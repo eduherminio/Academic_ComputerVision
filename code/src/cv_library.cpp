@@ -11,6 +11,7 @@
 
 
 #include "../header/cv_library.hpp"
+#include <string>
 
 void manual_binarize(const Mat & myPic, const int threshold, const bool save) {
   Mat binPic= myPic.clone();
@@ -40,8 +41,10 @@ void manual_binarize(const Mat & myPic, const int threshold, const bool save) {
 
 std::unique_ptr<Rect> light_rectangle(const Mat & Pic_original, const int threshold)
 {
-  Mat Pic_grey;
-  cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
+  Mat Pic_grey= Pic_original.clone();
+  if((Pic_original.channels())>1)  {
+    cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
+  }
 
   int righter=0, lower=0, lefter= 999, higher=999, grey_level;
 
@@ -65,5 +68,37 @@ std::unique_ptr<Rect> light_rectangle(const Mat & Pic_original, const int thresh
   // std::cout<<righter<<" "<<lower<<std::endl;
   // std::cout<<lefter<<" "<<higher<<std::endl;
 
-  return std::unique_ptr<Rect> (new Rect(lefter, higher, +abs(lefter-righter), +abs(higher-lower))); // origin.x, origin.y, wide, height
+  return std::unique_ptr<Rect> (new Rect(lefter, higher, +abs(lefter-righter), +abs(higher-lower))); // esquina_inferior.x, esquina_inferior.y, wide, height
+}
+
+void light_rectangle(const Mat & Pic_original, const int threshold, int & xleft, int &xright, int &yhigh, int &ylow) {
+  Mat Pic_grey= Pic_original.clone();
+  if((Pic_original.channels())>1)  {
+    cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
+  }
+  int righter=0, lower=0, lefter= 999, higher=999, grey_level;
+
+  for(int i=0; i<Pic_grey.rows; ++i)      // from low to high
+  {
+    uchar *p_row= Pic_grey.ptr<uchar>(i);
+    for(int j=0; j<Pic_grey.cols; ++j)  // from left to right
+    {    
+      grey_level= p_row[j];
+      // std::cout<<i<<" "<<j<<" "<<grey_level<<std::endl;
+      if(grey_level>threshold)  {
+          if(j>righter)   righter=  j;
+          if(i>lower)     lower=    i;
+
+          if(j<lefter)    lefter=   j;
+          if(i<higher)    higher=   i;
+      }
+    }
+  }
+
+  // std::cout<<righter<<" "<<lower<<std::endl;
+  // std::cout<<lefter<<" "<<higher<<std::endl;
+  xleft=  lefter;
+  xright= righter;
+  yhigh=  lower;
+  ylow=   higher;
 }

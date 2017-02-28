@@ -24,6 +24,6 @@ using namespace cv;
 
 void manual_binarize(const Mat & myPic, const int threshold, const bool save);
 std::unique_ptr<Rect> light_rectangle(const Mat & myPic, const int threshold);
-
+void light_rectangle(const Mat & Pic_original, const int threshold, int & xleft, int &xright, int &yhigh, int & ylow);
 
 #endif // CV_LIBRARY
