@@ -36,6 +36,42 @@ int init_pic(int argc, char* argv[], std::string & strpicName, Mat & myPic) {
   return 0;
 }
 
+int init_pic(int argc, char* argv[], std::vector<std::string> & strpicName, std::vector<Mat> & myPic) {
+
+  static int n_pic=0;
+
+  myPic.reserve(argc-1);
+
+  for(int i=1; i<argc; ++i)
+  {
+    ++n_pic;
+
+    if(argc < n_pic+1) {
+      std::cout<<"Missing picture name"<<std::endl;
+      return -1;
+    }
+
+    myPic[i-1]= imread( argv[n_pic], CV_LOAD_IMAGE_UNCHANGED);
+
+    if( myPic[i-1].empty())  {
+      std::cout<<"Error opening picture file "<<argv[n_pic]<<std::endl;
+      return -1;
+    }
+
+    char chpicName[CHL];
+    strcpy(chpicName, argv[n_pic]);
+    std::string picName(chpicName);
+
+    int n= picName.find("Pictures/");
+    picName.erase(picName.begin(), picName.begin() + n+9);
+    strpicName.push_back(picName);
+
+    show_pic(myPic[i-1], strpicName[i-1]);
+  }
+
+  return 0;
+}
+
 void print_info(const Mat & myPic, const std::string & picName ) {
 
   std::cout << "OpenCV version: " << CV_MAJOR_VERSION << "." << CV_MINOR_VERSION << std::endl;

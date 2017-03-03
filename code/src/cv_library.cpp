@@ -52,7 +52,7 @@ std::unique_ptr<Rect> light_rectangle(const Mat & Pic_original, const int thresh
   {
     uchar *p_row= Pic_grey.ptr<uchar>(i);
     for(int j=0; j<Pic_grey.cols; ++j)  // from left to right
-    {    
+    {
       grey_level= p_row[j];
       // std::cout<<i<<" "<<j<<" "<<grey_level<<std::endl;
       if(grey_level>threshold)  {
@@ -82,7 +82,7 @@ void light_rectangle(const Mat & Pic_original, const int threshold, int & xleft,
   {
     uchar *p_row= Pic_grey.ptr<uchar>(i);
     for(int j=0; j<Pic_grey.cols; ++j)  // from left to right
-    {    
+    {
       grey_level= p_row[j];
       // std::cout<<i<<" "<<j<<" "<<grey_level<<std::endl;
       if(grey_level>threshold)  {
@@ -101,4 +101,24 @@ void light_rectangle(const Mat & Pic_original, const int threshold, int & xleft,
   xright= righter;
   yhigh=  lower;
   ylow=   higher;
+}
+
+void fill_no_rectangle(const Mat & Pic_original, Mat & Pic_clean, Rect rectangulo)
+{
+  Pic_clean= Pic_original.clone();
+
+  for(int i=0; i<Pic_clean.rows; ++i)      // from low to high
+  {
+    for(int j=0; j<Pic_clean.cols; ++j)  // from left to right
+    {
+      Point2i Pixel(j,i); // TO-CHECK
+      if(!Pixel.inside(rectangulo)) {
+        Point3_<uchar>* p = Pic_clean.ptr<Point3_<uchar> >(i,j);
+        p->x=0;
+        p->y=0;
+        p->z=0;
+        // p_row[j]= 0; // We need
+      }
+    }
+  }
 }
