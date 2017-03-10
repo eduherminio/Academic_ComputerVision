@@ -1,5 +1,6 @@
-filename="4_Geometric_Transformations"
-imagename="../../Pictures/rotated.png"
-imagename2=""
-imagename3=""
-imagename4=""
+filename="6_Filters"
+imagename="../../Pictures/noisy_eye.jpg"
+imagename2="../../Pictures/noisy_motorcycles.png"
+imagename3="../../Pictures/noisy_sky.jpg"
+imagename4="../../Pictures/noisy_woman.jpg"
+

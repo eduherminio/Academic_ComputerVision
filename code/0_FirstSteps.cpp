@@ -19,7 +19,7 @@ using namespace cv;
 int main(int argc, char* argv[])
 {
   Mat myPic, myPic_grey;
-  string picName;
+  std::string picName;
 
   if(init_pic(argc, argv, picName, myPic) < 0)    return EXIT_FAILURE;
 

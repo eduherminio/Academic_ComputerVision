@@ -18,6 +18,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+
 using namespace cv;
 
 #define stringify( name ) # name  // returns a string with the name of the variable

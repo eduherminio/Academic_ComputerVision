@@ -36,11 +36,11 @@ int init_pic(int argc, char* argv[], std::string & strpicName, Mat & myPic) {
   return 0;
 }
 
-int init_pic(int argc, char* argv[], std::vector<std::string> & strpicName, std::vector<Mat> & myPic) {
+int init_pic(int argc, char* argv[], std::vector<std::string> & strpicName, std::vector<Mat> & v_Pic) {
 
   static int n_pic=0;
 
-  myPic.reserve(argc-1);
+  v_Pic.reserve(argc-1);
 
   for(int i=1; i<argc; ++i)
   {
@@ -51,12 +51,15 @@ int init_pic(int argc, char* argv[], std::vector<std::string> & strpicName, std:
       return -1;
     }
 
-    myPic[i-1]= imread( argv[n_pic], CV_LOAD_IMAGE_UNCHANGED);
+    Mat pic= imread( argv[n_pic], CV_LOAD_IMAGE_UNCHANGED);
+    // myPic[i-1]= imread( argv[n_pic], CV_LOAD_IMAGE_GRAYSCALE);
 
-    if( myPic[i-1].empty())  {
+    if( pic.empty())  {
       std::cout<<"Error opening picture file "<<argv[n_pic]<<std::endl;
       return -1;
     }
+    else
+      v_Pic.push_back(pic);
 
     char chpicName[CHL];
     strcpy(chpicName, argv[n_pic]);
@@ -66,7 +69,8 @@ int init_pic(int argc, char* argv[], std::vector<std::string> & strpicName, std:
     picName.erase(picName.begin(), picName.begin() + n+9);
     strpicName.push_back(picName);
 
-    show_pic(myPic[i-1], strpicName[i-1]);
+
+    //show_pic(pic, strpicName[i-1]);
   }
 
   return 0;

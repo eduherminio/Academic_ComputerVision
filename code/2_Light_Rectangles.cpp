@@ -17,9 +17,6 @@
 
 using namespace cv;
 
-#define stringify( name ) # name
-
-
 int main(int argc, char* argv[])
 {
   Mat Pic_original, Pic_original2;
@@ -41,7 +38,7 @@ int main(int argc, char* argv[])
 
   std::cout << "Red rectangle area:" << p_light->area() << std::endl;
   std::cout << "Green rectangle area:" << p_lighter->area() << std::endl;
-  
+
   show_pic(Pic_original, "Picture with drawings");
   show_pic(Pic_black, "Show only rectangles");
 
@@ -50,10 +47,10 @@ int main(int argc, char* argv[])
 
   Size2i newSize(640, 480);
   double reduction_coef=0.5;
-  
+
   resize(Pic_original, Pic_reduced_abs, newSize);
   resize(Pic_original, Pic_reduced_coef, Size(), reduction_coef, reduction_coef, CV_INTER_LINEAR);
-  
+
   show_pic(Pic_reduced_abs, "Small");
   show_pic(Pic_reduced_coef, "Small - correctly reduced");
 
