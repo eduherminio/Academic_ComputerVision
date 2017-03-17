@@ -1,0 +1,7 @@
+filename="6_Filters"
+imagename="../../Pictures/noisy_sky.jpg"
+imagename2="../../Pictures/noisy_motorcycles.png"
+imagename3="../../Pictures/noisy_eye.jpg"
+imagename4="../../Pictures/noisy_woman.jpg"
+imagename5=""
+

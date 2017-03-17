@@ -36,55 +36,57 @@ int main( int argc, char* argv[])
   Mat matPerspInv(2,3,CV_32FC1);
 
 
-  double reduction_coef=1;
+  double reduction_coef= 0.5;
 
   for(auto& x:v_Pic) {
+    
     resize(x, x, Size(), reduction_coef, reduction_coef, CV_INTER_LANCZOS4);
+  
+    Point2f corrected_points[4], perspective_points[4];
+
+    std::string window_name("Marca los 4 puntos, comenzando por el vertice superior izquierdo, y pulse una tecla");
+    show_pic(x, window_name);
+    setMouseCallback(window_name, mouseEvent,  perspective_points);
+    waitKey(0);
+    destroyWindow(window_name);
+
+    float lado= sqrt(pow(perspective_points[0].x - perspective_points[1].x, 2) + pow(perspective_points[0].y - perspective_points[1].y, 2));
+
+    corrected_points[0]= { 0                            ,     0                             };
+    corrected_points[1]= { corrected_points[0].x + lado ,     corrected_points[0].y         };
+    corrected_points[2]= { corrected_points[1].x        ,     corrected_points[1].y + lado  };
+    corrected_points[3]= { corrected_points[2].x - lado ,     corrected_points[2].y         };
+
+  /*
+    namedWindow("Marca esquinas rectangulo en mismo orden");
+    imshow( "Marca esquinas rectangulo en mismo orden", v_Pic[1] );
+    setMouseCallback("Marca esquinas rectangulo en mismo orden", mouseEvent,  corrected_points);
+    imshow("Marca esquinas rectangulo en mismo orden", v_Pic[1]);
+    waitKey(0);
+    destroyWindow("Marca esquinas rectangulo en mismo orden");
+  */
+
+    //Calculamos la matriz que lleva de los perspective_points marcados a los corrected_points deducidos
+    matPersp=getPerspectiveTransform(perspective_points, corrected_points);
+
+    //Aplicamos la transformacion
+    warpPerspective(x, Pic_final, matPersp, x.size());
+
+    Rect Rectangle(0,0, lado, lado);
+    rectangle(Pic_final, Rectangle, Scalar(0,0,255));
+
+    show_pic(Pic_final, "Sin perspectiva");
+
+    // Anti-transformamos para ver si obtenemos la imagen y el rectángulo original
+    invert(matPersp, matPerspInv);
+    warpPerspective(Pic_final, Pic_finalInv, matPerspInv, Pic_final.size());
+
+    show_pic(Pic_finalInv, "Imagen final invertida");
+
+    waitKey(0);
+
+    reduction_coef*=2;  // 2nd pic
   }
-
-
-  Point2f corrected_points[4], perspective_points[4];
-
-  std::string window_name("Marca los 4 puntos, comenzando por el vertice superior izquierdo, y pulse una tecla");
-  show_pic(v_Pic[0], window_name);
-  setMouseCallback(window_name, mouseEvent,  perspective_points);
-  waitKey(0);
-  destroyWindow(window_name);
-
-  float lado= sqrt(pow(perspective_points[0].x - perspective_points[1].x, 2) + pow(perspective_points[0].y - perspective_points[1].y, 2));
-
-  corrected_points[0]= { 0                            ,     0                             };
-  corrected_points[1]= { corrected_points[0].x + lado ,     corrected_points[0].y         };
-  corrected_points[2]= { corrected_points[1].x        ,     corrected_points[1].y + lado  };
-  corrected_points[3]= { corrected_points[2].x - lado ,     corrected_points[2].y         };
-
-/*
-  namedWindow("Marca esquinas rectangulo en mismo orden");
-  imshow( "Marca esquinas rectangulo en mismo orden", v_Pic[1] );
-  setMouseCallback("Marca esquinas rectangulo en mismo orden", mouseEvent,  corrected_points);
-  imshow("Marca esquinas rectangulo en mismo orden", v_Pic[1]);
-  waitKey(0);
-  destroyWindow("Marca esquinas rectangulo en mismo orden");
-*/
-
-  //Calculamos la matriz que lleva de los perspective_points marcados a los corrected_points deducidos
-  matPersp=getPerspectiveTransform(perspective_points, corrected_points);
-
-  //Aplicamos la transformacion
-  warpPerspective(v_Pic[0], Pic_final, matPersp, v_Pic[0].size());
-
-  Rect Rectangle(0,0, lado, lado);
-  rectangle(Pic_final, Rectangle, Scalar(0,0,255));
-
-  show_pic(Pic_final, "Sin perspectiva");
-
-  // Anti-transformamos para ver si obtenemos la imagen y el rectángulo original
-  invert(matPersp, matPerspInv);
-  warpPerspective(Pic_final, Pic_finalInv, matPerspInv, Pic_final.size());
-
-  show_pic(Pic_finalInv, "Imagen final invertida");
-
-  waitKey(0);
 
   return EXIT_SUCCESS;
 }

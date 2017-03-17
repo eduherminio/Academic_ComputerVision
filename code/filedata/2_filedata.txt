@@ -1,0 +1,7 @@
+filename="2_Light_Rectangles"
+imagename="../../Pictures/bombilla.jpg"
+imagename2=""
+imagename3=""
+imagename4=""
+imagename5=""
+

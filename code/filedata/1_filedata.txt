@@ -1,0 +1,7 @@
+filename="1_Binarization"
+imagename="../../Pictures/Parrots.jpg"
+imagename2=""
+imagename3=""
+imagename4=""
+imagename5=""
+
