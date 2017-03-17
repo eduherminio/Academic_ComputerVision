@@ -11,14 +11,16 @@
 
 
 #include "../header/cv_library.hpp"
-#include <string>
 
-void manual_binarize(const Mat & myPic, const int threshold, const bool save) {
+
+void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
   Mat binPic= myPic.clone();
 
-  for(int i=0; i<binPic.rows; i++)    {
+  for(int i=0; i<binPic.rows; i++)
+  {
     uchar* ptrRow=      binPic.ptr<uchar>(i);
-    for(int j=0; j<binPic.cols; j++)  {
+    for(int j=0; j<binPic.cols; j++)
+    {
       double grey_level= *(ptrRow+j);
       if(grey_level < threshold)
         *(ptrRow+j)= 0;
@@ -29,7 +31,7 @@ void manual_binarize(const Mat & myPic, const int threshold, const bool save) {
     // std::cout<<std::endl;
   }
 
-  show_pic(binPic, "Black & White");
+  show_pic(binPic, "Black& White");
 
   if(save== true)
   {
@@ -39,8 +41,7 @@ void manual_binarize(const Mat & myPic, const int threshold, const bool save) {
   }
 }
 
-std::unique_ptr<Rect> light_rectangle(const Mat & Pic_original, const int threshold)
-{
+std::unique_ptr<Rect> light_rectangle(const Mat& Pic_original, const int threshold)  {
   Mat Pic_grey= Pic_original.clone();
   if((Pic_original.channels())>1)  {
     cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
@@ -71,7 +72,7 @@ std::unique_ptr<Rect> light_rectangle(const Mat & Pic_original, const int thresh
   return std::unique_ptr<Rect> (new Rect(lefter, higher, +abs(lefter-righter), +abs(higher-lower))); // esquina_inferior.x, esquina_inferior.y, wide, height
 }
 
-void light_rectangle(const Mat & Pic_original, const int threshold, int & xleft, int &xright, int &yhigh, int &ylow) {
+void light_rectangle(const Mat& Pic_original, const int threshold, int& xleft, int& xright, int& yhigh, int& ylow) {
   Mat Pic_grey= Pic_original.clone();
   if((Pic_original.channels())>1)  {
     cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
@@ -103,8 +104,7 @@ void light_rectangle(const Mat & Pic_original, const int threshold, int & xleft,
   ylow=   higher;
 }
 
-void fill_no_rectangle(const Mat & Pic_original, Mat & Pic_clean, Rect rectangulo)
-{
+void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, Rect rectangulo)  {
   Pic_clean= Pic_original.clone();
 
   for(int i=0; i<Pic_clean.rows; ++i)      // from low to high
@@ -121,4 +121,67 @@ void fill_no_rectangle(const Mat & Pic_original, Mat & Pic_clean, Rect rectangul
       }
     }
   }
+}
+
+void create_histo (const Mat& Pic, Mat& hist) {
+  Mat Pic_grey= Pic.clone();
+
+  if((Pic_grey.channels())>1)  {
+    cvtColor(Pic, Pic_grey, CV_BGR2GRAY);
+  }
+
+  int histSize[1];
+  float hranges[2];
+  const float* ranges[1];
+  int channels[1];
+
+  histSize[0]= 256;         // size
+  hranges[0]= 0.0;          // min_value
+  hranges[1]= 256.0;        // max_value
+  ranges[0]= hranges;       // ranges
+  channels[0]= 0;           // channel 0
+
+  cv::calcHist(&Pic_grey,
+               1,		        // number of pics
+               channels,	  // channels used
+               cv::Mat(),   // no mask
+               hist,		    // histograma resultante
+               1,			      // 1D
+               histSize,	  // number of elements in hist
+               ranges		    // pixel range value
+              );
+
+
+  show_histo(hist, Scalar( 0,0,0) );
+}
+
+void create_histo (const std::vector<Mat>& v_Pic, std::vector<Mat>& v_hist) {
+  v_hist.resize(v_Pic.size());
+  for(int iter=0; iter<v_Pic.size(); ++iter)  {
+    create_histo(v_Pic.at(iter), v_hist.at(iter));
+  }
+}
+
+void show_histo   (const Mat& histo, const Scalar color)  {
+  static int n_pic;
+  n_pic++;
+
+  Mat Pic_histo( HISTO_HEIGHT, HISTO_WIDTH, CV_8UC3, Scalar( 255,255,255) );
+
+  int ratio = cvRound( (double) HISTO_WIDTH/HISTO_SIZE );
+
+  normalize(histo, histo, 0, HISTO_HEIGHT, NORM_MINMAX);  // histo -> [0, HISTO_HEIGHT]
+
+  for( int i = 1; i < HISTO_SIZE; i++ )   // Lines which join the ends of the bars
+  {
+    line( Pic_histo,
+      Point( (i-1) * ratio, HISTO_HEIGHT - cvRound(histo.at<float>(i-1)) ),
+      Point(  i * ratio,    HISTO_HEIGHT - cvRound(histo.at<float>(i)) ),
+      color, 2, 8, 0  );
+  }
+
+  Rect rect(0, 0, HISTO_WIDTH-1, HISTO_HEIGHT-1);
+  rectangle(Pic_histo, rect, Scalar(0,0,255));
+
+  show_pic(Pic_histo, stringify(Pic_histo) + std::to_string(n_pic));
 }

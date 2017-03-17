@@ -1,6 +1,7 @@
-filename="6_Filters"
-imagename="../../Pictures/noisy_eye.jpg"
-imagename2="../../Pictures/noisy_motorcycles.png"
-imagename3="../../Pictures/noisy_sky.jpg"
-imagename4="../../Pictures/noisy_woman.jpg"
+filename="7_Histogram"
+imagename="../../Pictures/noisy_woman.jpg"
+imagename2="../../Pictures/woman.jpg"
+imagename3="../../Pictures/Parrots_B&W.jpg"
+imagename4=""
+imagename5=""
 

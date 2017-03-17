@@ -12,7 +12,8 @@
 
 #include "../header/basic_operations.hpp"
 
-int init_pic(int argc, char* argv[], std::string & strpicName, Mat & myPic) {
+
+int init_pic(int argc, char* argv[], std::string& strpicName, Mat& myPic) {
   if(argc != 2) {
     std::cout<<"Missing picture name"<<std::endl;
     return -1;
@@ -36,11 +37,11 @@ int init_pic(int argc, char* argv[], std::string & strpicName, Mat & myPic) {
   return 0;
 }
 
-int init_pic(int argc, char* argv[], std::vector<std::string> & strpicName, std::vector<Mat> & v_Pic) {
+int init_pic(int argc, char* argv[], std::vector<std::string>& strpicName, std::vector<Mat>& v_Pic) {   // TO-IMPROVE
 
   static int n_pic=0;
 
-  v_Pic.reserve(argc-1);
+  //v_Pic.resize(argc-1);
 
   for(int i=1; i<argc; ++i)
   {
@@ -76,7 +77,7 @@ int init_pic(int argc, char* argv[], std::vector<std::string> & strpicName, std:
   return 0;
 }
 
-void print_info(const Mat & myPic, const std::string & picName ) {
+void print_info(const Mat& myPic, const std::string& picName ) {
 
   std::cout << "OpenCV version: " << CV_MAJOR_VERSION << "." << CV_MINOR_VERSION << std::endl;
   // std::cout << "OpenCV: " << getBuildInformation();
@@ -98,27 +99,45 @@ void print_info(const Mat & myPic, const std::string & picName ) {
   std::cout<<std::endl;
 }
 
+void print_info(const std::vector<Mat>& v_Pic, const std::vector<std::string>& v_picName ) {
+  for(int iter=0; iter<v_Pic.size(); ++iter)
+  {
+    print_info(v_Pic[iter], v_picName[iter]);
+  }
+}
 
-void show_pic(const Mat & myPic)  {
+
+
+void show_pic(const Mat& myPic)  {
     std::cout<<"ss"<<std::endl;
   std::string name(stringify(myPic));
   namedWindow(name, WINDOW_AUTOSIZE);
   imshow(name, myPic);
 }
 
-// void show_pic(const Mat & myPic, bool save)  {     // string in void show_pic(const Mat & myPic, std::string name) is interpreted as bool
+// void show_pic(const Mat& myPic, bool save)  {     // string in void show_pic(const Mat& myPic, std::string name) is interpreted as bool
 //     std::cout<<"ssff"<<std::endl;
 //   show_pic(myPic);
 //   if(save==true)
 //     save_pic(myPic);
 // }
 
-void show_pic(const Mat & myPic, std::string name) {
+void show_pic(const Mat& myPic, const std::string name) {
   namedWindow(name, WINDOW_AUTOSIZE);
   imshow(name, myPic);
 }
 
-void show_pic(const Mat & myPic, std::string name, bool save) {
+void show_pic(const std::vector<Mat>& v_Pic, const std::vector<std::string>& v_name) {
+  static size_t n_pic=0;
+  for(int iter=0; iter<v_Pic.size(); ++iter)
+  {
+    namedWindow(v_name[iter] + std::to_string(n_pic), WINDOW_AUTOSIZE);
+    imshow(v_name[iter] + std::to_string(n_pic), v_Pic[iter]);
+    ++n_pic;
+  }
+}
+
+void show_pic(const Mat& myPic, const std::string name, const bool save) {
   namedWindow(name, WINDOW_AUTOSIZE);
   imshow(name, myPic);
   if(save==true)
@@ -131,8 +150,7 @@ void save_pic(const Mat& Pic) {
   imwrite(newName, Pic);
 }
 
-
-void save_pic(const Mat& Pic, std::string str) {
+void save_pic(const Mat& Pic, const std::string str) {
   std::string newName(stringify(Pic));
   newName += "_" + str + ".jpg";  // Fundamental to add the extension
   imwrite(newName, Pic);
