@@ -1,5 +1,5 @@
 filename="1_Binarization"
-imagename="../../Pictures/Parrots.jpg"
+imagename1="../../Pictures/Parrots.jpg"
 imagename2=""
 imagename3=""
 imagename4=""

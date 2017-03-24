@@ -22,6 +22,8 @@ using namespace cv;
 #define HISTO_WIDTH   1024    // 4 units/level
 #define HISTO_HEIGHT  512
 
+void grey_pic(const Mat& Pic_original,          Mat& Pic_grey);
+void grey_pic(const std::vector<Mat>& v_Pic,    std::vector<Mat>& v_Pic_grey);
 void manual_binarize  (const Mat& myPic, const int threshold, const bool save);
 std::unique_ptr<Rect> light_rectangle (const Mat& myPic, const int threshold);
 void light_rectangle  (const Mat& Pic_original, const int threshold, int& xleft, int& xright, int& yhigh, int& ylow);

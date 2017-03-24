@@ -12,6 +12,20 @@
 
 #include "../header/cv_library.hpp"
 
+void grey_pic(const Mat& Pic_original, Mat& Pic_grey)    {
+  if((Pic_original.channels())>1)  {
+    cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
+  }
+}
+
+void grey_pic(const std::vector<Mat>& v_Pic, std::vector<Mat>& v_Pic_grey)    {
+  v_Pic_grey.resize(v_Pic.size());
+
+  for(int i=0; i<v_Pic.size(); ++i)
+  {
+    grey_pic(v_Pic[i], v_Pic_grey[i]);
+  }
+}
 
 void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
   Mat binPic= myPic.clone();

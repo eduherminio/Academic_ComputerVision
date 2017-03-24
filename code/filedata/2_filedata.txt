@@ -1,5 +1,5 @@
 filename="2_Light_Rectangles"
-imagename="../../Pictures/bombilla.jpg"
+imagename1="../../Pictures/bombilla.jpg"
 imagename2=""
 imagename3=""
 imagename4=""

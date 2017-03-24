@@ -22,13 +22,17 @@ using namespace cv;
 #define stringify( name ) # name  // returns a string with the name of the variable
 #define CHL 100   // Char length
 
-int init_pic(int argc, char* argv[], std::string& strpicName, Mat& myPic);
-int init_pic(int argc, char* argv[], std::vector<std::string>& strpicName, std::vector<Mat>& myPic);
-void print_info(const Mat& myPic, const std::string& picName);
-void print_info(const std::vector<Mat>& v_Pic, const std::vector<std::string>& v_picName );
+int init_pic(const int& argc, char* argv[], std::string& strpicName,              Mat& myPic);
+int init_pic(const int& argc, char* argv[], std::vector<std::string>& strpicName, std::vector<Mat>& myPic);
+
+void print_info(const Mat& myPic);
+void print_info(const std::vector<Mat>& v_Pic);
+void print_info(const Mat& myPic,               const std::string& picName);
+void print_info(const std::vector<Mat>& v_Pic,  const std::vector<std::string>& v_picName );
 
 
 void show_pic(const Mat& myPic);
+void show_pic(const std::vector<Mat>& v_Pic);
 // void show_pic(const Mat& myPic, bool save);
 
 void show_pic(const Mat& myPic,               const std::string name);

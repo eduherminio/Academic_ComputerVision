@@ -6,7 +6,7 @@ export env_filename=$filename
 mkdir -p build && cd build
 cmake ..  #&> /dev/null
 make -b
-./$filename $imagename $imagename2 $imagename3 $imagename4
+./$filename $imagename1 $imagename2 $imagename3 $imagename4
 
 
 

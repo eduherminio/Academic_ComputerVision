@@ -1,5 +1,5 @@
 filename="3_RGB"
-imagename="../../Pictures/colourful.jpg"
+imagename1="../../Pictures/colourful.jpg"
 imagename2=""
 imagename3=""
 imagename4=""
