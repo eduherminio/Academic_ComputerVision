@@ -137,11 +137,9 @@ void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, Rect rectangulo)
   }
 }
 
-void create_histo (const Mat& Pic, Mat& hist) {
-  Mat Pic_grey= Pic.clone();
-
-  if((Pic_grey.channels())>1)  {
-    cvtColor(Pic, Pic_grey, CV_BGR2GRAY);
+void create_histo (const Mat& Pic_grey, Mat& hist, Scalar color)  { // General function
+  if((Pic_grey.channels())>1 && color== BLACK)  {
+    std::cout<<"Something's probably wrong"<<std::endl;
   }
 
   int histSize[1];
@@ -165,23 +163,77 @@ void create_histo (const Mat& Pic, Mat& hist) {
                ranges		    // pixel range value
               );
 
+  if(color==BLACK)
+  {
+    Mat Pic_histo( HISTO_HEIGHT, HISTO_WIDTH, CV_8UC3, WHITE );
+    draw_histo(Pic_histo, hist, color);
 
-  show_histo(hist, Scalar( 0,0,0) );
-}
-
-void create_histo (const std::vector<Mat>& v_Pic, std::vector<Mat>& v_hist) {
-  v_hist.resize(v_Pic.size());
-  for(int iter=0; iter<v_Pic.size(); ++iter)  {
-    create_histo(v_Pic.at(iter), v_hist.at(iter));
+    show_histo(Pic_histo);
   }
 }
 
-void show_histo   (const Mat& histo, const Scalar color)  {
-  static int n_pic;
-  n_pic++;
+void create_histo (const Mat& Pic, Mat& hist) {   // 1 pic, 1 hist -> We can assume user wants a B&W histogram
+  Mat Pic_grey= Pic.clone();
 
-  Mat Pic_histo( HISTO_HEIGHT, HISTO_WIDTH, CV_8UC3, Scalar( 255,255,255) );
+  if((Pic_grey.channels())>1)  {
+    cvtColor(Pic, Pic_grey, CV_BGR2GRAY);
+  }
 
+  create_histo(Pic_grey, hist, BLACK);
+}
+
+void create_histo (const Mat& Pic, std::vector<Mat>& v_hist)   {    // 1 pic, vector of hist -> We assume yser wabts a RGB histogram
+  Mat Pic_color= Pic.clone();
+  if((Pic.channels())!=3)  {
+    std::cout<<"\n***BEWARE: not a color pic!***\n"<<std::endl;
+    cvtColor(Pic,Pic_color,COLOR_GRAY2RGB);     // Transform the B&W pic in RGB
+  }
+
+  Mat Pic_histo( HISTO_HEIGHT, HISTO_WIDTH, CV_8UC3, WHITE );
+  std::vector<Mat> v_BGR;
+  v_BGR.resize(3);
+  v_hist.resize(3);
+  split(Pic_color, v_BGR);
+
+  create_histo(v_BGR[0],  v_hist[0], BLUE);
+  create_histo(v_BGR[1],  v_hist[1], GREEN);
+  create_histo(v_BGR[2],  v_hist[2], RED);
+
+  draw_histo(Pic_histo,   v_hist[0], BLUE);
+  draw_histo(Pic_histo,   v_hist[1], GREEN);
+  draw_histo(Pic_histo,   v_hist[2], RED);
+
+  show_histo(Pic_histo);
+}
+
+void create_histo (const std::vector<Mat>& v_Pic, std::vector<Mat>& v_hist) { // Does NOT return all hist
+  bool BW= true;
+  for(const auto& Pic:v_Pic)  {
+    if((Pic.channels()) == 3)      // If one of them is color Pic, creates RGB histograms
+    {
+      BW= false;
+      break;
+    }
+  }
+  if(BW==true)
+  {
+    v_hist.resize(v_Pic.size());
+    for(int iter=0; iter<v_Pic.size(); ++iter)
+    {
+      create_histo(v_Pic.at(iter), v_hist.at(iter));
+    }
+  }
+  else    // Only case when not all hists are going to be returned - TO-CHECK
+  {
+    for(const auto& Pic:v_Pic)
+    {
+      create_histo(Pic, v_hist);
+    }
+  }
+}
+
+
+void draw_histo   (Mat& Pic_histo, const Mat& histo, const Scalar color)  {
   int ratio = cvRound( (double) HISTO_WIDTH/HISTO_SIZE );
 
   normalize(histo, histo, 0, HISTO_HEIGHT, NORM_MINMAX);  // histo -> [0, HISTO_HEIGHT]
@@ -193,9 +245,32 @@ void show_histo   (const Mat& histo, const Scalar color)  {
       Point(  i * ratio,    HISTO_HEIGHT - cvRound(histo.at<float>(i)) ),
       color, 2, 8, 0  );
   }
+}
+
+void show_histo   (Mat& Pic_histo)  {
+  static int n_pic;
 
   Rect rect(0, 0, HISTO_WIDTH-1, HISTO_HEIGHT-1);
-  rectangle(Pic_histo, rect, Scalar(0,0,255));
+  rectangle(Pic_histo, rect, Scalar(100,100,100));
 
   show_pic(Pic_histo, stringify(Pic_histo) + std::to_string(n_pic));
+  n_pic++;  // To show one per picture
+}
+
+void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, const int& contrast, Mat& Pic_final) {
+    double alpha, beta, delta;
+    if( contrast > 0 )
+    {
+        delta = 127. * contrast/100;
+        alpha = 255./(255. - delta*2);
+        beta  = alpha*(brightness - delta);
+    }
+    else
+    {
+        delta = -128. * contrast/100;
+        alpha = (256. - delta*2)/255.;
+        beta  = alpha*brightness + delta;
+    }
+
+    Pic_original.convertTo(Pic_final, CV_8U, alpha, beta);    // imgGrisResult(x,y) = saturate_cast<uchar> (alpha*imgGris(x,y) + beta);
 }

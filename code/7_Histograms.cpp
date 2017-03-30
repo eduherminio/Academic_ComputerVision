@@ -25,12 +25,15 @@ int main( int argc, char* argv[])
   std::vector<Mat>          v_histo;
 
   if(init_pic(argc, argv, v_picName, v_Pic) < 0)    return EXIT_FAILURE;
-
-  create_histo(v_Pic, v_histo);
   show_pic(v_Pic, v_picName);
+  v_histo.resize(v_Pic.size());
+
+  create_histo(v_Pic[2], v_histo[0]); // B&W histo (internal RGB -> B&W conversion, if needed)
+  create_histo(v_Pic[2], v_histo);    // RGB histo (internal B&W -> RGB conversion, if needed)
+  create_histo(v_Pic, v_histo);       // B&W histo if ALL of them are B&W, otherwise RGB histo
+
 
   waitKey(0);
-
 
   return EXIT_SUCCESS;
 }

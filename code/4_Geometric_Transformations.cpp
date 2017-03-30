@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 }
 
 
-void rotation_trackbar(int iAngulo, void *userdata)
+void rotation_trackbar(int iAngulo, void* userdata)
 {
   Rotation_params rotation_data= *((Rotation_params*)userdata); // cast + de-reference
 
