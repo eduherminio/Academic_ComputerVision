@@ -1,4 +1,4 @@
-filename="7_Histogram"
+filename="7_Histograms"
 imagename1="../../Pictures/Parrots.jpg"
 imagename2="../../Pictures/woman.jpg"
 imagename3="../../Pictures/Parrots_B&W.jpg"

@@ -20,15 +20,6 @@ using namespace cv;
 #define SAVE    true
 #define NOTSAVE false
 
-void rotation_trackbar(int, void*);
-
-struct Rotation_params
-{
-  Mat     Pic_src;
-  Mat     Pic_dst;
-  Point2i pt;
-};
-
 int main(int argc, char* argv[])
 {
   Mat Pic_original, Pic_grey, Pic_interest1, Pic_trasl1, Pic_rotated, Pic_rotated_grey, Pic_cleared, Pic_trasl, Pic_scaled, Pic_final;         // Beware the order
@@ -65,27 +56,28 @@ int main(int argc, char* argv[])
   waitKey(0);
 
 // Camino 2:
-  int iAngulo = 180;
   namedWindow( "Imagen Rotada");
-  Rotation_params rotation_data;
-  rotation_data.Pic_src= Pic_original.clone();
-  rotation_data.Pic_dst= rotation_data.Pic_src.clone();
 
+  UserData instance;
+  instance.Pic_src= Pic_original.clone();
+  instance.Pic_dst= instance.Pic_src.clone();
+  instance.angle= 180;
 
   // Rotación en torno al centro de esa zona de interés, previa a la traslación (aunque no se vea)
-  rotation_data.pt= {(int)(0.5*rect.width), (int)(0.5*rect.height)};
+  instance.pt= {(int)(0.5*rect.width), (int)(0.5*rect.height)};
 
-  createTrackbar("Angulo", "Imagen Rotada", &iAngulo, 360, rotation_trackbar, (void*) (&rotation_data));
-  rotation_trackbar(iAngulo, &rotation_data);
+  createTrackbar("Angulo", "Imagen Rotada", &instance.angle, 360, rotation_trackbar, (void*) (&instance));
+  rotation_trackbar(instance.angle, &instance);
   waitKey(0);
 
   // Mejor giramos en torno al centro de la imagen
-  rotation_data.pt= {(int)(0.5*Pic_original.rows), (int)(0.5*Pic_original.cols)};
-  iAngulo = 180;
-  rotation_trackbar(iAngulo, &rotation_data);
+  instance.pt= {(int)(0.5*Pic_original.rows), (int)(0.5*Pic_original.cols)};
+
+  instance.angle=180;
+  rotation_trackbar(instance.angle, &instance);
   waitKey(0);
 
-  Pic_rotated= rotation_data.Pic_dst.clone();
+  Pic_rotated= instance.Pic_dst.clone();
 
   // Señalización de la nueva zona de interés
   cvtColor(Pic_rotated, Pic_rotated_grey, CV_BGR2GRAY);
@@ -149,15 +141,4 @@ int main(int argc, char* argv[])
   waitKey(0);
 
   return EXIT_SUCCESS;
-}
-
-
-void rotation_trackbar(int iAngulo, void* userdata)
-{
-  Rotation_params rotation_data= *((Rotation_params*)userdata); // cast + de-reference
-
-  Point centro= Point(rotation_data.pt.x, rotation_data.pt.y);
-  Mat matrizRot = getRotationMatrix2D( centro, (iAngulo - 180), 1);
-  warpAffine( rotation_data.Pic_src, rotation_data.Pic_dst, matrizRot, rotation_data.Pic_src.size() );
-  imshow( "Imagen Rotada", rotation_data.Pic_dst);
 }

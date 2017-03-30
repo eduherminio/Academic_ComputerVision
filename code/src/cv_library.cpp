@@ -137,8 +137,8 @@ void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, Rect rectangulo)
   }
 }
 
-void create_histo (const Mat& Pic_grey, Mat& hist, Scalar color)  { // General function
-  if((Pic_grey.channels())>1 && color== BLACK)  {
+void create_histo (const Mat& Pic, Mat& hist, Scalar color)  { // General function
+  if((Pic.channels())>1 && color== BLACK)  {
     std::cout<<"Something's probably wrong"<<std::endl;
   }
 
@@ -153,7 +153,7 @@ void create_histo (const Mat& Pic_grey, Mat& hist, Scalar color)  { // General f
   ranges[0]= hranges;       // ranges
   channels[0]= 0;           // channel 0
 
-  cv::calcHist(&Pic_grey,
+  cv::calcHist(&Pic,
                1,		        // number of pics
                channels,	  // channels used
                cv::Mat(),   // no mask
@@ -273,4 +273,29 @@ void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, con
     }
 
     Pic_original.convertTo(Pic_final, CV_8U, alpha, beta);    // imgGrisResult(x,y) = saturate_cast<uchar> (alpha*imgGris(x,y) + beta);
+}
+
+void rotation_trackbar(int, void* userdata) {
+  UserData user_data= *((UserData*)userdata); // cast + de-reference
+  user_data.angle-=180;
+  Point centro= Point(user_data.pt.x, user_data.pt.y);
+  Mat matrizRot = getRotationMatrix2D( centro, (user_data.angle), 1);
+  warpAffine( user_data.Pic_src, user_data.Pic_dst, matrizRot, user_data.Pic_src.size() );
+  imshow( "Imagen Rotada", user_data.Pic_dst);
+}
+
+void brightness_contrast_trackbar(int, void* userdata)   {
+  UserData user_data= *((UserData*)userdata);   // cast + de-reference
+
+  user_data.brightness-=100;    // [-100, +100]
+  user_data.contrast-=100;      //  [-100, +100]
+
+  set_Brightness_Contrast(user_data.Pic_src, user_data.brightness, user_data.contrast, user_data.Pic_dst);
+
+  create_histo(user_data.Pic_dst, user_data.hist, PSEUDO_BLACK);  // BLACK would make it call to draw_histo & show_pic every time
+  Mat Pic_histo( HISTO_HEIGHT, HISTO_WIDTH, CV_8UC3, WHITE );
+  draw_histo(Pic_histo, user_data.hist, RED);
+
+  show_pic(Pic_histo, "Histogram");
+  show_pic(user_data.Pic_dst, "Pic");
 }
