@@ -16,6 +16,8 @@ void grey_pic(const Mat& Pic_original, Mat& Pic_grey)    {
   if((Pic_original.channels())>1)  {
     cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
   }
+  else
+    Pic_grey= Pic_original.clone();
 }
 
 void grey_pic(const std::vector<Mat>& v_Pic, std::vector<Mat>& v_Pic_grey)    {
@@ -137,6 +139,41 @@ void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, Rect rectangulo)
   }
 }
 
+void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, const int& contrast, Mat& Pic_final) {
+    double alpha, beta, delta;
+    if( contrast > 0 )
+    {
+        delta = 127. * contrast/100;
+        alpha = 255./(255. - delta*2);
+        beta  = alpha*(brightness - delta);
+    }
+    else
+    {
+        delta = -128. * contrast/100;
+        alpha = (256. - delta*2)/255.;
+        beta  = alpha*brightness + delta;
+    }
+
+    Pic_original.convertTo(Pic_final, CV_8U, alpha, beta);    // imgGrisResult(x,y) = saturate_cast<uchar> (alpha*imgGris(x,y) + beta);
+}
+
+void create_contours(const Mat& Pic_src, Mat& Pic_dst, std::vector<std::vector<Point>>& contours)   {
+  Pic_dst=Pic_src.clone();
+
+  findContours(
+    Pic_src,
+    contours,
+    // std::vector<Vec4i> hierarchy; // Optional in OpenCV 3.2
+    CV_RETR_EXTERNAL,
+    CV_CHAIN_APPROX_NONE
+    // 	Point  	offset = Point()
+  );
+  drawContours(Pic_dst,contours,0,Scalar(255),CV_FILLED);
+  std::cout << "Located regions: " <<  contours.size() << std::endl;
+  // show_pic(Pic_dst);
+}
+
+
 void create_histo (const Mat& Pic, Mat& hist, Scalar color)  { // General function
   if((Pic.channels())>1 && color== BLACK)  {
     std::cout<<"Something's probably wrong"<<std::endl;
@@ -220,7 +257,7 @@ void create_histo (const std::vector<Mat>& v_Pic, std::vector<Mat>& v_hist) { //
     v_hist.resize(v_Pic.size());
     for(int iter=0; iter<v_Pic.size(); ++iter)
     {
-      create_histo(v_Pic.at(iter), v_hist.at(iter));
+      create_histo(v_Pic[iter], v_hist[iter]);
     }
   }
   else    // Only case when not all hists are going to be returned - TO-CHECK
@@ -257,23 +294,6 @@ void show_histo   (Mat& Pic_histo)  {
   n_pic++;  // To show one per picture
 }
 
-void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, const int& contrast, Mat& Pic_final) {
-    double alpha, beta, delta;
-    if( contrast > 0 )
-    {
-        delta = 127. * contrast/100;
-        alpha = 255./(255. - delta*2);
-        beta  = alpha*(brightness - delta);
-    }
-    else
-    {
-        delta = -128. * contrast/100;
-        alpha = (256. - delta*2)/255.;
-        beta  = alpha*brightness + delta;
-    }
-
-    Pic_original.convertTo(Pic_final, CV_8U, alpha, beta);    // imgGrisResult(x,y) = saturate_cast<uchar> (alpha*imgGris(x,y) + beta);
-}
 
 void rotation_trackbar(int, void* userdata) {
   UserData user_data= *((UserData*)userdata); // cast + de-reference

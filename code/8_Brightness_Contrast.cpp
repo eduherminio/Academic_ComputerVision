@@ -28,14 +28,25 @@ int main( int argc, char* argv[])
   if(init_pic(argc, argv, v_picName, v_Pic) < 0)    return EXIT_FAILURE;
   grey_pic(v_Pic, v_Pic_grey);
   show_pic(v_Pic_grey[0]);
-  create_histo(v_Pic[0], histo, BLACK);
+  create_histo(v_Pic[0], histo);
 
   namedWindow("Select brightness & contrast");
   UserData user_data;
   user_data.Pic_src= v_Pic_grey[0].clone();
 
-  createTrackbar("Brightness","Select brightness & contrast", &user_data.brightness,  user_data.brightness*2, brightness_contrast_trackbar, (void*) (&user_data));
-  createTrackbar("Contrast",  "Select brightness & contrast", &user_data.contrast,    user_data.contrast*2,   brightness_contrast_trackbar, (void*) (&user_data));
+  createTrackbar( "Brightness",
+                  "Select brightness & contrast",
+                  &user_data.brightness,
+                  user_data.brightness*2,
+                  brightness_contrast_trackbar,
+                  (void*) (&user_data)
+                );
+  createTrackbar( "Contrast",
+                  "Select brightness & contrast",
+                  &user_data.contrast,
+                  user_data.contrast*2,
+                  brightness_contrast_trackbar,
+                  (void*) (&user_data));
 
   brightness_contrast_trackbar(user_data.brightness, &user_data);
 
