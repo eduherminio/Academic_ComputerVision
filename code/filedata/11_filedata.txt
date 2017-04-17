@@ -1,0 +1,7 @@
+filename="11_Morphology"
+imagename1="../../Pictures/cojinetes.jpg"
+imagename2="../../Pictures/llave.jpg"
+imagename3=""
+imagename4=""
+imagename5=""
+

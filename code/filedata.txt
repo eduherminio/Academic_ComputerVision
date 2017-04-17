@@ -1,7 +1,7 @@
-filename="9_Contours"
-imagename1="../../Pictures/rotated.png"
-imagename2="../../Pictures/hands.jpg"
-imagename3="../../Pictures/llave.jpg"
-imagename4="../../Pictures/Parrots_B&W.jpg"
+filename="11_Morphology"
+imagename1="../../Pictures/tornillos.png"
+imagename2="../../Pictures/tirafondos0.png"
+imagename3="../../Pictures/tirafondos2.png"
+imagename4="../../Pictures/cojinetes.bmp"
 imagename5=""
 

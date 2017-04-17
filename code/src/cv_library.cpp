@@ -29,6 +29,24 @@ void grey_pic(const std::vector<Mat>& v_Pic, std::vector<Mat>& v_Pic_grey)    {
   }
 }
 
+void color_pic(const Mat& Pic_original, Mat& Pic_color)    {
+  if( Pic_original.channels() != 3)  {
+    cvtColor(Pic_original, Pic_color, CV_GRAY2BGR);
+  }
+  else
+    Pic_color= Pic_original.clone();
+}
+
+void color_pic(const std::vector<Mat>& v_Pic, std::vector<Mat>& v_Pic_color)    {
+  v_Pic_color.resize(v_Pic.size());
+
+  for(int i=0; i<v_Pic.size(); ++i)
+  {
+    color_pic(v_Pic[i], v_Pic_color[i]);
+  }
+}
+
+
 void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
   Mat binPic= myPic.clone();
 
@@ -168,11 +186,35 @@ void create_contours(const Mat& Pic_src, Mat& Pic_dst, std::vector<std::vector<P
     CV_CHAIN_APPROX_NONE
     // 	Point  	offset = Point()
   );
-  drawContours(Pic_dst,contours,0,Scalar(255),CV_FILLED);
+  drawContours(Pic_dst, contours, 0, Scalar(255), CV_FILLED);
   std::cout << "Located regions: " <<  contours.size() << std::endl;
   // show_pic(Pic_dst);
 }
 
+int count_objects(const Mat& Pic, Mat& Pic_dst) {
+  Mat aux;
+  std::vector<std::vector<Point>> v_contours;
+  create_contours(Pic, aux, v_contours);
+
+  for( int j=0; j<v_contours.size(); ++j)
+  {
+    if( contourArea(v_contours[j], false) > 100)
+      drawContours(Pic_dst, v_contours, j , RED, 1);
+
+    Rect bounding_rect= boundingRect(v_contours[j]);
+    rectangle(Pic_dst, bounding_rect,  BLUE, 1);
+  }
+
+  return v_contours.size();
+}
+
+void morpho_pic(const Mat& src, Mat& dst, int iter, cv::MorphTypes type, Mat kernel, Point anchor)  {
+  morphologyEx(src, dst, type, kernel, anchor, iter);
+}
+
+void morpho_pic(const Mat& src, Mat& dst, int iter, cv::MorphTypes type, Point anchor, Mat kernel ) {
+  morphologyEx(src, dst, type, kernel, anchor, iter);
+}
 
 void create_histo (const Mat& Pic, Mat& hist, Scalar color)  { // General function
   if((Pic.channels())>1 && color== BLACK)  {
@@ -223,7 +265,7 @@ void create_histo (const Mat& Pic, std::vector<Mat>& v_hist)   {    // 1 pic, ve
   Mat Pic_color= Pic.clone();
   if((Pic.channels())!=3)  {
     std::cout<<"\n***BEWARE: not a color pic!***\n"<<std::endl;
-    cvtColor(Pic,Pic_color,COLOR_GRAY2RGB);     // Transform the B&W pic in RGB
+    cvtColor(Pic, Pic_color, COLOR_GRAY2RGB);     // Transform the B&W pic in RGB
   }
 
   Mat Pic_histo( HISTO_HEIGHT, HISTO_WIDTH, CV_8UC3, WHITE );
@@ -295,7 +337,7 @@ void show_histo   (Mat& Pic_histo)  {
 }
 
 
-void rotation_trackbar(int, void* userdata) {
+void rotation_trackbar            (int, void* userdata) {
   UserData user_data= *((UserData*)userdata); // cast + de-reference
   user_data.angle-=180;
   Point centro= Point(user_data.pt.x, user_data.pt.y);
@@ -304,7 +346,7 @@ void rotation_trackbar(int, void* userdata) {
   imshow( "Imagen Rotada", user_data.Pic_dst);
 }
 
-void brightness_contrast_trackbar(int, void* userdata)   {
+void brightness_contrast_trackbar (int, void* userdata) {
   UserData user_data= *((UserData*)userdata);   // cast + de-reference
 
   user_data.brightness-=100;    // [-100, +100]
@@ -318,4 +360,32 @@ void brightness_contrast_trackbar(int, void* userdata)   {
 
   show_pic(Pic_histo, "Histogram");
   show_pic(user_data.Pic_dst, "Pic");
+}
+
+void thresh_trackbar              (int, void* userdata) {
+  UserData user_data= *((UserData*)userdata); // cast + de-reference
+
+  static cv::RNG rng(3.14159264);   // OpenCV own random number generator - fixed seed
+
+  Canny(user_data.Pic_src, user_data.Pic_dst, user_data.thresh, user_data.thresh*2, 3);    // Detect edges using canny
+
+  show_pic(user_data.Pic_dst, "Canny");
+
+  findContours(
+    user_data.Pic_dst,
+    user_data.contours,
+    // std::vector<Vec4i> hierarchy; // Optional in OpenCV 3.2
+    CV_RETR_TREE,
+    CV_CHAIN_APPROX_SIMPLE, Point(0, 0) // Find contours
+    // 	Point  	offset = Point()
+  );
+
+  Mat drawing = Mat::zeros(user_data.Pic_dst.size(), CV_8UC3); // Draw contours
+  for(int i=0; i< user_data.contours.size(); ++i)
+  {
+    Scalar color = Scalar(rng.uniform(0,255), rng.uniform(0,255), rng.uniform(0,255));
+    drawContours(drawing, user_data.contours, i, color, 2);
+  }
+
+  show_pic(drawing, "Colored contours");
 }

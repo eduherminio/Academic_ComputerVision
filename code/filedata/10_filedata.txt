@@ -1,0 +1,7 @@
+filename="10_Canny"
+imagename1="../../Pictures/chess.jpg"
+imagename2="../../Pictures/cojinetes.bmp"
+imagename3="../../Pictures/llave.jpg"
+imagename4="../../Pictures/rotated.png"
+imagename5=""
+
