@@ -111,7 +111,7 @@ void light_rectangle(const Mat& Pic_original, const int threshold, int& xleft, i
   if((Pic_original.channels())>1)  {
     cvtColor(Pic_original, Pic_grey, CV_BGR2GRAY);
   }
-  int righter=0, lower=0, lefter= 999, higher=999, grey_level;
+  int righter=0, lower=0, lefter=Pic_grey.cols, higher=Pic_grey.rows, grey_level;
 
   for(int i=0; i<Pic_grey.rows; ++i)      // from low to high
   {
@@ -138,23 +138,58 @@ void light_rectangle(const Mat& Pic_original, const int threshold, int& xleft, i
   ylow=   higher;
 }
 
-void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, Rect rectangulo)  {
+void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, const Rect& rectangulo, const Scalar& color)  {
   Pic_clean= Pic_original.clone();
 
   for(int i=0; i<Pic_clean.rows; ++i)      // from low to high
   {
     for(int j=0; j<Pic_clean.cols; ++j)  // from left to right
     {
-      Point2i Pixel(j,i); // TO-CHECK
-      if(!Pixel.inside(rectangulo)) {
+      Point2i Pixel(j,i);
+      if(!Pixel.inside(rectangulo))
+      {
         Point3_<uchar>* p = Pic_clean.ptr<Point3_<uchar> >(i,j);
-        p->x=0;
-        p->y=0;
-        p->z=0;
+        p->x= color[0];
+        p->y= color[1];
+        p->z= color[2];
         // p_row[j]= 0; // We need
       }
     }
   }
+}
+
+void fill_no_rectangle(Mat& Pic, const Rect& rectangulo, const Scalar& color)  {  // TO-CHECK
+  fill_no_rectangle(Pic.clone(), Pic, rectangulo, color);
+}
+
+void get_roi_from_boundingRect(const Mat& Pic, const std::vector<Rect>& v_bounding_rect, Rect& roi, int& lefter, int& righter, int& lower, int& higher) {
+  lefter= Pic.rows-1;
+  lower= Pic.cols-1;
+  righter=0;
+  higher=0;
+
+  for(int i=0; i<Pic.rows; ++i)      // from low to high
+  {
+    for(int j=0; j<Pic.cols; ++j)  // from left to right
+    {
+      Point2i Pixel(j,i);
+      for(const auto& rectangulo : v_bounding_rect)
+      {
+        if(Pixel.inside(rectangulo))
+        {
+          // assert(i==Pixel.y);
+          // assert(j==Pixel.x);
+
+          if(j>righter)   righter=  j;
+          if(i>higher)    higher=   i;
+
+          if(j<lefter)    lefter=   j;
+          if(i<lower)     lower=    i;
+        }
+      }
+    }
+  }
+  roi= Rect(lefter-1, lower-1, 3+abs(lefter-righter), 3+abs(lower-higher));
 }
 
 void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, const int& contrast, Mat& Pic_final) {

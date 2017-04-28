@@ -37,7 +37,9 @@ void color_pic(const std::vector<Mat>& v_Pic,   std::vector<Mat>& v_Pic_color);
 void manual_binarize  (const Mat& myPic, const int threshold, const bool save);
 std::unique_ptr<Rect> light_rectangle (const Mat& myPic, const int threshold);
 void light_rectangle  (const Mat& Pic_original, const int threshold, int& xleft, int& xright, int& yhigh, int& ylow);
-void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, Rect rectangulo);
+void fill_no_rectangle(Mat& Pic, const Rect& rectangulo, const Scalar& color= BLACK);
+void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, const Rect& rectangulo, const Scalar& color= BLACK);
+void get_roi_from_boundingRect(const Mat& Pic, const std::vector<Rect>& v_bounding_rect, Rect& roi, int& lefter, int& righter, int& lower, int& higher);
 void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, const int& contrast, Mat& Pic_final);
 void create_contours(const Mat& Pic_src, Mat& Pic_dst, std::vector<std::vector<Point>>& contours);
 int count_objects(const Mat& Pic, Mat& Pic_dst);
@@ -56,6 +58,5 @@ void show_histo       (Mat& Pic_histo);
 void rotation_trackbar            (int, void* userdata);
 void brightness_contrast_trackbar (int, void* userdata);
 void thresh_trackbar              (int, void* userdata);
-
 
 #endif // CV_LIBRARY

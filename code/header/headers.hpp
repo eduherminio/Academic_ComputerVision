@@ -6,6 +6,8 @@
 #include <vector>
 #include <utility>
 #include <cmath>
+#include <random>
+#include <chrono>
 
 #include "opencv2/opencv.hpp"
 
@@ -19,6 +21,7 @@
 #define RED           Scalar(0, 0, 255)
 #define GREEN         Scalar(0, 255, 0)
 #define BLUE          Scalar(255, 0, 0)
+
 
 
 #endif // HEADERS

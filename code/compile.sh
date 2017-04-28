@@ -5,9 +5,9 @@ set -e
 source filedata.txt
 export env_filename=$filename
 mkdir -p build && cd build
-cmake ..  &> /dev/null
+cmake ..  &> /dev/null 
 make -j$n_cores -b
-./$filename $imagename1 $imagename2 $imagename3 $imagename4
+./$filename $imagename1 $imagename2 $imagename3 $imagename4 $imagename5
 
 
 
