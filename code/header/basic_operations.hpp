@@ -22,6 +22,8 @@ using namespace cv;
 #define stringify( name ) # name  // returns a string with the name of the variable
 #define CHL 100   // Char length
 
+bool double_equals(double a, double b, double epsilon = 0.001);
+
 int init_pic(const int& argc, char* argv[], std::string& strpicName,              Mat& myPic);
 int init_pic(const int& argc, char* argv[], std::vector<std::string>& strpicName, std::vector<Mat>& myPic);
 

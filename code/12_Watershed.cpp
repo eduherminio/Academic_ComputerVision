@@ -15,7 +15,6 @@
 #include "./header/cv_library.hpp"
 #include <vector>
 #include <string>
-#include <cassert>
 
 using namespace cv;
 

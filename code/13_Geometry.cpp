@@ -83,7 +83,7 @@ int main( int argc, char* argv[])
         ellipse(Pic, v_ellipse_rect.back(), GREEN, 2);
 
         Point2f rect_points[4]; v_bounding_rotated_rect.back().points(rect_points);
-        for( int k=0; k<4; k++ )
+        for(int k=0; k<4; ++k)
           line(Pic, rect_points[k], rect_points[(k+1)%4], PURPLE, 1);
 
         approxPolyDP(Mat(v_contours[j]), v_contours_poly[j], 3, true);

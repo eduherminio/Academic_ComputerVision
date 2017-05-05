@@ -110,6 +110,23 @@ void fix_size(std::vector<Mat>& v_Pic)  {
   }
 }
 
+void rotate_pic(const Mat& Pic_src, Mat& Pic_rotated, const Point2f center, const double angle) {
+  Mat rot_mat = cv::getRotationMatrix2D(center, angle, 1.0);
+  warpAffine(Pic_src, Pic_rotated, rot_mat, Pic_src.size());
+}
+
+void rotate_pic(Mat& Pic, const Point2f center, const double angle) {
+  rotate_pic(Pic, Pic, center, angle);
+}
+
+void draw_rectangle(Mat& Pic, const Point2f (&vertices)[4], const Scalar color, const int thickness)    {    // def. color: BLACK, def. thickenss: 1
+  for(int vert_1=0; vert_1<4; ++vert_1)
+  {
+    int vert_2= (vert_1+1)%4;
+    cv::line(Pic, vertices[vert_1], vertices[vert_2], color, thickness);
+  }
+}
+
 std::unique_ptr<Rect> light_rectangle(const Mat& Pic_original, const int threshold)  {
   Mat Pic_grey= Pic_original.clone();
   if((Pic_original.channels())>1)  {
@@ -331,7 +348,7 @@ void morpho_pic(const std::vector<Mat>& v_src,  std::vector<Mat>& v_dst,  int it
   }
 }
 
-void create_histo (const Mat& Pic, Mat& hist, Scalar color)  { // General function
+void create_histo (const Mat& Pic, Mat& hist, const Scalar color)  { // General function
   if((Pic.channels())>1 && color== BLACK)  {
     std::cout<<"Something's probably wrong"<<std::endl;
   }
@@ -426,6 +443,12 @@ void create_histo (const std::vector<Mat>& v_Pic, std::vector<Mat>& v_hist) { //
   }
 }
 
+void create_histo(const Mat& Pic)
+{
+  Mat hist;
+
+  create_histo(Pic, hist);
+}
 
 void draw_histo   (Mat& Pic_histo, const Mat& histo, const Scalar color)  {
   int ratio = cvRound( (double) HISTO_WIDTH/HISTO_SIZE );

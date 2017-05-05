@@ -41,6 +41,9 @@ void rescale_pic(const Mat& Pic_original, Mat& Pic_rescaled, const float coef);
 void fix_size(const Mat& Pic_original, Mat& Pic_rescaled);
 void fix_size(Mat& Pic);
 void fix_size(std::vector<Mat>& Pic);
+void rotate_pic(const Mat& Pic_src, Mat& Pic_rotated, const Point2f center, const double angle);
+void rotate_pic(Mat& Pic,const Point2f center, const double angle);
+void draw_rectangle(Mat& Pic, const Point2f (&vertices)[4], const Scalar color= BLACK, const int thickness=1);
 std::unique_ptr<Rect> light_rectangle (const Mat& myPic, const int threshold);
 void light_rectangle  (const Mat& Pic_original, const int threshold, int& xleft, int& xright, int& yhigh, int& ylow);
 void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, const Rect& _rectangle, const Scalar& color= BLACK);
@@ -59,10 +62,11 @@ void morpho_pic(const Mat& src,                 Mat& dst,                 int it
 void morpho_pic(const std::vector<Mat>& v_src,  std::vector<Mat>& v_dst,  int iter, cv::MorphTypes type, Point anchor, Mat kernel=Mat::ones(3, 3, CV_32F));
 
 // Histograms
-void create_histo     (const Mat& Pic, Mat& hist, Scalar color);
+void create_histo     (const Mat& Pic, Mat& hist, const Scalar color);
 void create_histo     (const Mat& Pic, Mat& hist);
 void create_histo     (const Mat& Pic, std::vector<Mat>& v_hist);
 void create_histo     (const std::vector<Mat>& v_Pic, std::vector<Mat>& v_hist);
+void create_histo     (const Mat& Pic);
 void draw_histo       (Mat& Pic_histo, const Mat& histo, const Scalar color);
 void show_histo       (Mat& Pic_histo);
 

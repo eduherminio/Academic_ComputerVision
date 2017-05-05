@@ -13,6 +13,11 @@
 #include "../header/basic_operations.hpp"
 #include <string>
 
+bool double_equals(double a, double b, double epsilon)
+{
+    return std::abs(a - b) < epsilon;
+}
+
 int init_pic(const int& argc, char* argv[], std::string& strpicName, Mat& myPic) {
   if(argc != 2) {
     std::cout<<"Missing picture name"<<std::endl;
