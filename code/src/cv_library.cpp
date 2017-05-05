@@ -46,6 +46,18 @@ void color_pic(const std::vector<Mat>& v_Pic, std::vector<Mat>& v_Pic_color)    
   }
 }
 
+void th_pic(const Mat& Pic_original, Mat& Pic_th, const int _th, const int type) {  // def. type: OTSU, def. th: 125
+  threshold(Pic_original, Pic_th, _th, 255, type);
+}
+
+void th_pic(const std::vector<Mat>& v_Pic_original, std::vector<Mat>& v_Pic_th, const int _th, const int type) {  // def. type: OTSU, def. _th: 125
+  v_Pic_th.resize(v_Pic_original.size());
+
+  for(int i=0; i<v_Pic_original.size(); ++i)
+  {
+    th_pic(v_Pic_original[i], v_Pic_th[i], _th, type);
+  }
+}
 
 void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
   Mat binPic= myPic.clone();
@@ -72,6 +84,29 @@ void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
    std::string newName(stringify(myPic));
     newName += "_B&W.jpg";  // Fundamental to add the extension
     imwrite(newName, binPic);
+  }
+}
+
+void rescale_pic(const Mat& Pic_original, Mat& Pic_rescaled, const float coef)  {
+  resize(Pic_original, Pic_rescaled, Size(), coef, coef, CV_INTER_LANCZOS4);
+}
+
+void fix_size(const Mat& Pic_original, Mat& Pic_rescaled) {
+  Pic_rescaled= Pic_original.clone();
+  while( (Pic_rescaled.rows > MAX_HEIGHT) || (Pic_rescaled.cols > MAX_WIDTH))
+  {
+    rescale_pic(Pic_rescaled, Pic_rescaled, 0.9);
+  }
+}
+
+void fix_size(Mat& Pic1)  {
+  fix_size(Pic1, Pic1);
+}
+
+void fix_size(std::vector<Mat>& v_Pic)  {
+  for(auto& Pic1: v_Pic)
+  {
+    fix_size(Pic1, Pic1);
   }
 }
 
@@ -138,7 +173,7 @@ void light_rectangle(const Mat& Pic_original, const int threshold, int& xleft, i
   ylow=   higher;
 }
 
-void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, const Rect& rectangulo, const Scalar& color)  {
+void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, const Rect& _rectangle, const Scalar& color)  {   // def. color: BLACK
   Pic_clean= Pic_original.clone();
 
   for(int i=0; i<Pic_clean.rows; ++i)      // from low to high
@@ -146,20 +181,40 @@ void fill_no_rectangle(const Mat& Pic_original, Mat& Pic_clean, const Rect& rect
     for(int j=0; j<Pic_clean.cols; ++j)  // from left to right
     {
       Point2i Pixel(j,i);
-      if(!Pixel.inside(rectangulo))
+      if(!Pixel.inside(_rectangle))
       {
         Point3_<uchar>* p = Pic_clean.ptr<Point3_<uchar> >(i,j);
         p->x= color[0];
         p->y= color[1];
         p->z= color[2];
-        // p_row[j]= 0; // We need
       }
     }
   }
 }
 
-void fill_no_rectangle(Mat& Pic, const Rect& rectangulo, const Scalar& color)  {  // TO-CHECK
-  fill_no_rectangle(Pic.clone(), Pic, rectangulo, color);
+void fill_no_rectangle(Mat& Pic, const Rect& _rectangle, const Scalar& color)  {   // def. color: BLACK
+  fill_no_rectangle(Pic, Pic, _rectangle, color);
+}
+
+void fill_no_rectangles(const Mat& Pic_original, Mat& Pic_clean, const std::vector<Rect>& v_rectangle, const Scalar& color)  {   // def. color: BLACK
+  Mat total_pic(Pic_original.rows, Pic_original.cols, Pic_original.type(), WHITE);
+
+  for(const auto& _rectangle : v_rectangle)
+  {
+    Mat _rectangle_content;
+
+    fill_no_rectangle(Pic_original, _rectangle_content, _rectangle, color);
+
+    Mat m_rectangle= _rectangle_content(Rect(_rectangle.x, _rectangle.y, _rectangle.width, _rectangle.height)).clone();
+
+    m_rectangle.copyTo(total_pic(cv::Rect(_rectangle.x,_rectangle.y, m_rectangle.cols, m_rectangle.rows)));
+  }
+
+  Pic_clean= total_pic.clone();
+}
+
+void fill_no_rectangles(Mat& Pic, const std::vector<Rect>& v_rectangle, const Scalar& color)  {     // def. color: BLACK
+  fill_no_rectangles(Pic, Pic, v_rectangle, color);
 }
 
 void get_roi_from_boundingRect(const Mat& Pic, const std::vector<Rect>& v_bounding_rect, Rect& roi, int& lefter, int& righter, int& lower, int& higher) {
@@ -173,9 +228,9 @@ void get_roi_from_boundingRect(const Mat& Pic, const std::vector<Rect>& v_boundi
     for(int j=0; j<Pic.cols; ++j)  // from left to right
     {
       Point2i Pixel(j,i);
-      for(const auto& rectangulo : v_bounding_rect)
+      for(const auto& _rectangle : v_bounding_rect)
       {
-        if(Pixel.inside(rectangulo))
+        if(Pixel.inside(_rectangle))
         {
           // assert(i==Pixel.y);
           // assert(j==Pixel.x);
@@ -190,6 +245,11 @@ void get_roi_from_boundingRect(const Mat& Pic, const std::vector<Rect>& v_boundi
     }
   }
   roi= Rect(lefter-1, lower-1, 3+abs(lefter-righter), 3+abs(lower-higher));
+}
+
+void get_roi_from_boundingRect(const Mat& Pic, const std::vector<Rect>& v_bounding_rect, Rect& roi) {
+  int lefter, righter, lower, higher;
+  get_roi_from_boundingRect(Pic, v_bounding_rect, roi, lefter, righter, lower, higher);
 }
 
 void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, const int& contrast, Mat& Pic_final) {
@@ -211,7 +271,7 @@ void set_Brightness_Contrast(const Mat& Pic_original, const int& brightness, con
 }
 
 void create_contours(const Mat& Pic_src, Mat& Pic_dst, std::vector<std::vector<Point>>& contours)   {
-  Pic_dst=Pic_src.clone();
+  Pic_dst= Pic_src.clone();
 
   findContours(
     Pic_src,
@@ -224,6 +284,10 @@ void create_contours(const Mat& Pic_src, Mat& Pic_dst, std::vector<std::vector<P
   drawContours(Pic_dst, contours, 0, Scalar(255), CV_FILLED);
   std::cout << "Located regions: " <<  contours.size() << std::endl;
   // show_pic(Pic_dst);
+}
+
+void create_contours(Mat& Pic, std::vector<std::vector<Point>>& contours)   {
+  create_contours(Pic, Pic, contours);
 }
 
 int count_objects(const Mat& Pic, Mat& Pic_dst) {
@@ -243,12 +307,28 @@ int count_objects(const Mat& Pic, Mat& Pic_dst) {
   return v_contours.size();
 }
 
-void morpho_pic(const Mat& src, Mat& dst, int iter, cv::MorphTypes type, Mat kernel, Point anchor)  {
+void morpho_pic(const Mat& src,                 Mat& dst,                 int iter, cv::MorphTypes type, Mat kernel, Point anchor)  { // def. kernel, def. anchor
   morphologyEx(src, dst, type, kernel, anchor, iter);
 }
 
-void morpho_pic(const Mat& src, Mat& dst, int iter, cv::MorphTypes type, Point anchor, Mat kernel ) {
+void morpho_pic(const std::vector<Mat>& v_src,  std::vector<Mat>& v_dst,  int iter, cv::MorphTypes type, Mat kernel, Point anchor)  {
+  v_dst.resize(v_src.size());
+  for(int i=0; i<v_src.size(); ++i)
+  {
+    morpho_pic(v_src[i], v_dst[i], iter, type, kernel, anchor);
+  }
+}
+
+void morpho_pic(const Mat& src,                 Mat& dst,                 int iter, cv::MorphTypes type, Point anchor, Mat kernel ) { // def. anchor
   morphologyEx(src, dst, type, kernel, anchor, iter);
+}
+
+void morpho_pic(const std::vector<Mat>& v_src,  std::vector<Mat>& v_dst,  int iter, cv::MorphTypes type, Point anchor, Mat kernel)  {
+  v_dst.resize(v_src.size());
+  for(int i=0; i<v_src.size(); ++i)
+  {
+    morpho_pic(v_src[i], v_dst[i], iter, type, kernel, anchor);
+  }
 }
 
 void create_histo (const Mat& Pic, Mat& hist, Scalar color)  { // General function

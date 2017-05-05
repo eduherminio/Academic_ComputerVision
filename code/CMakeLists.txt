@@ -23,15 +23,12 @@ target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
 # Why C++14?
 #   use of ‘auto’ in parameter declaration only available with -std=c++14
 
-# set(namefile "0_Intro")
-#   creates a variable named namefile
+# cmake_minimum_required(VERSION 2.8)
+#   This line must go first in the file
 
-# set(filename $ENV{namefile})
-#   accesses an environment variable
-#file(STRINGS "filename.txt" filename)
-#   creates a variable named filename from the content of filename.txt
-#   filename.txt should only have the content of the variable inside
-#   (not variable="content")
+# project($ENV{env_filename})
+#   avoids creating a variable for the name, allowing to use ${PROJECT_NAME} whenever its necessary
+#   This allows to place project() before anything else but cmake_minimum_required()
 
 
 #
