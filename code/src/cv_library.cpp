@@ -87,26 +87,38 @@ void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
   }
 }
 
+void rescale_pic(const Mat& Pic_original, Mat& Pic_rescaled, const float coef_x, const float coef_y)  {
+  resize(Pic_original, Pic_rescaled, Size(), coef_x, coef_y, CV_INTER_LANCZOS4);
+}
+
 void rescale_pic(const Mat& Pic_original, Mat& Pic_rescaled, const float coef)  {
   resize(Pic_original, Pic_rescaled, Size(), coef, coef, CV_INTER_LANCZOS4);
 }
 
-void fix_size(const Mat& Pic_original, Mat& Pic_rescaled) {
+void fix_size(const Mat& Pic_original, Mat& Pic_rescaled, const int max_height, const int max_width) {     // def max_height= MAX_HEIGHT, def max_width= MAX_WIDTH
   Pic_rescaled= Pic_original.clone();
-  while( (Pic_rescaled.rows > MAX_HEIGHT) || (Pic_rescaled.cols > MAX_WIDTH))
+  while( (Pic_rescaled.rows > max_height) || (Pic_rescaled.cols > max_width))
   {
     rescale_pic(Pic_rescaled, Pic_rescaled, 0.9);
   }
 }
 
-void fix_size(Mat& Pic1)  {
-  fix_size(Pic1, Pic1);
+void fix_size(Mat& Pic, const int max_height, const int max_width)  {   // def max_height= MAX_HEIGHT, def max_width= MAX_WIDTH
+  fix_size(Pic, Pic, max_height, max_width);
 }
 
-void fix_size(std::vector<Mat>& v_Pic)  {
-  for(auto& Pic1: v_Pic)
+void fix_size(std::vector<Mat>& v_Pic, const int max_height, const int max_width)  {  // def max_height= MAX_HEIGHT, def max_width= MAX_WIDTH
+  for(auto& Pic: v_Pic)
   {
-    fix_size(Pic1, Pic1);
+    fix_size(Pic, Pic, max_height, max_width);
+  }
+}
+
+void fix_size(std::vector<Mat>& v_Pic_src, std::vector<Mat>& v_Pic_dst, const int max_height, const int max_width)  {  // def max_height= MAX_HEIGHT, def max_width= MAX_WIDTH
+  v_Pic_dst.resize(v_Pic_src.size());
+  for(int i=0; i<v_Pic_src.size(); ++i)
+  {
+    fix_size(v_Pic_src[i], v_Pic_dst[i], max_height, max_width);
   }
 }
 
@@ -119,11 +131,11 @@ void rotate_pic(Mat& Pic, const Point2f center, const double angle) {
   rotate_pic(Pic, Pic, center, angle);
 }
 
-void draw_rectangle(Mat& Pic, const Point2f (&vertices)[4], const Scalar color, const int thickness)    {    // def. color: BLACK, def. thickenss: 1
+void draw_rectangle(Mat& Pic, const Point2f (&vertices)[4], const Scalar color, const int thickness, const cv::LineTypes linetype)  {    // def. color: BLACK, def. thickenss: 1, def. linetype= LINE_8
   for(int vert_1=0; vert_1<4; ++vert_1)
   {
     int vert_2= (vert_1+1)%4;
-    cv::line(Pic, vertices[vert_1], vertices[vert_2], color, thickness);
+    line(Pic, vertices[vert_1], vertices[vert_2], color, thickness, linetype);
   }
 }
 
@@ -222,7 +234,7 @@ void fill_no_rectangles(const Mat& Pic_original, Mat& Pic_clean, const std::vect
 
     fill_no_rectangle(Pic_original, _rectangle_content, _rectangle, color);
 
-    Mat m_rectangle= _rectangle_content(Rect(_rectangle.x, _rectangle.y, _rectangle.width, _rectangle.height)).clone();
+    Mat m_rectangle= _rectangle_content(_rectangle).clone();
 
     m_rectangle.copyTo(total_pic(cv::Rect(_rectangle.x,_rectangle.y, m_rectangle.cols, m_rectangle.rows)));
   }

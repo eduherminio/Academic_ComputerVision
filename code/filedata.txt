@@ -1,7 +1,7 @@
-filename="13_Geometry"
-imagename1="../../Pictures/tomatuercas1.jpg"
-imagename2="../../Pictures/tomatuercas2.jpg"
-imagename3="../../Pictures/tomatuercas3.jpg"
-imagename4="../../Pictures/cuadradas_redondas.jpg"
-imagename5="../../Pictures/tuercas_tornillos3.bmp"
+filename="14_"
+imagename1="../../Pictures/cuadradas_redondas.jpg"
+imagename2=""
+imagename3=""
+imagename4=""
+imagename5=""
 
