@@ -94,7 +94,8 @@ int main( int argc, char* argv[])
         warpAffine(Pic, Pic_translated, matTrasl, Pic.size());
 
         // show_pic(Pic_translated, "Pic_translated");                         // Debug
-
+        Point2f rect_points[4]; rotated_rect.points(rect_points);     // Debug
+        draw_rectangle(Pic, rect_points, BLUE);                       // Debug
         // Rotate it
 
         if(circularity < min_circularity)
@@ -154,6 +155,6 @@ int main( int argc, char* argv[])
   }
 
     waitKey(0);
-    
+
     return EXIT_SUCCESS;
 }
