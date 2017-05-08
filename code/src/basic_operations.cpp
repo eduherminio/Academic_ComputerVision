@@ -123,6 +123,7 @@ void show_pic(const Mat& myPic)  {
   namedWindow(name, WINDOW_AUTOSIZE);
   imshow(name, myPic);
 }
+
 void show_pic(const std::vector<Mat>& v_Pic)  {
   for(int i=0; i<v_Pic.size(); ++i)
   {
@@ -131,10 +132,18 @@ void show_pic(const std::vector<Mat>& v_Pic)  {
   }
 }
 
+void show_pic(const std::vector<Mat>& v_Pic, std::string name)  {
+  for(int i=0; i<v_Pic.size(); ++i)
+  {
+    show_pic(v_Pic.at(i), name + std::to_string(i+1) + "_");
+  }
+}
+
 void show_pic(const Mat& myPic, const std::string name) {
   namedWindow(name, WINDOW_AUTOSIZE);
   imshow(name, myPic);
 }
+
 void show_pic(const std::vector<Mat>& v_Pic, const std::vector<std::string>& v_name) {
   static size_t n_pic=1;
   for(int iter=0; iter<v_Pic.size(); ++iter)

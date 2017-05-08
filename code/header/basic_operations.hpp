@@ -35,6 +35,7 @@ void print_info(const std::vector<Mat>& v_Pic,  const std::vector<std::string>& 
 
 void show_pic(const Mat& myPic);
 void show_pic(const std::vector<Mat>& v_Pic);
+void show_pic(const std::vector<Mat>& v_Pic, std::string name);
 // void show_pic(const Mat& myPic, bool save);
 
 void show_pic(const Mat& myPic,               const std::string name);
