@@ -10,41 +10,43 @@
  */
 
 
-#ifndef BASIC_OPERATIONS
-#define BASIC_OPERATIONS
+#ifndef BASIC_OPERATIONS_HPP_INCLUDED
+#define BASIC_OPERATIONS_HPP_INCLUDED
 
 
 #include "headers.hpp"
 
-
 using namespace cv;
 
-#define stringify( name ) # name  // returns a string with the name of the variable
-#define CHL 100   // Char length
+namespace cv_lib
+{
+  #define stringify( name ) # name  // returns a string with the name of the variable
+  #define CHL 100   // Char length
 
-bool double_equals(double a, double b, double epsilon = 0.001);
+  bool double_equals(double a, double b, double epsilon = 0.001);
 
-int init_pic(const int& argc, char* argv[], std::string& strpicName,              Mat& myPic);
-int init_pic(const int& argc, char* argv[], std::vector<std::string>& strpicName, std::vector<Mat>& myPic);
+  int init_pic(const int& argc, char* argv[], std::string& strpicName,              Mat& myPic);
+  int init_pic(const int& argc, char* argv[], std::vector<std::string>& strpicName, std::vector<Mat>& myPic);
 
-void print_info(const Mat& myPic);
-void print_info(const std::vector<Mat>& v_Pic);
-void print_info(const Mat& myPic,               const std::string& picName);
-void print_info(const std::vector<Mat>& v_Pic,  const std::vector<std::string>& v_picName );
-
-
-void show_pic(const Mat& myPic);
-void show_pic(const std::vector<Mat>& v_Pic);
-void show_pic(const std::vector<Mat>& v_Pic, std::string name);
-// void show_pic(const Mat& myPic, bool save);
-
-void show_pic(const Mat& myPic,               const std::string name);
-void show_pic(const std::vector<Mat>& v_Pic,  const std::vector<std::string>& name);
-
-void show_pic(const Mat& myPic,               const std::string name, const bool save);
+  void print_info(const Mat& myPic);
+  void print_info(const std::vector<Mat>& v_Pic);
+  void print_info(const Mat& myPic,               const std::string& picName);
+  void print_info(const std::vector<Mat>& v_Pic,  const std::vector<std::string>& v_picName );
 
 
-void save_pic(const Mat& Pic);
-void save_pic(const Mat& Pic, const std::string str);
+  void show_pic(const Mat& myPic);
+  void show_pic(const std::vector<Mat>& v_Pic);
+  void show_pic(const std::vector<Mat>& v_Pic, std::string name);
+  // void show_pic(const Mat& myPic, bool save);
 
-#endif  // BASIC_OPERATIONS
+  void show_pic(const Mat& myPic,               const std::string name);
+  void show_pic(const std::vector<Mat>& v_Pic,  const std::vector<std::string>& name);
+
+  void show_pic(const Mat& myPic,               const std::string name, const bool save);
+
+
+  void save_pic(const Mat& Pic);
+  void save_pic(const Mat& Pic, const std::string str);
+}
+
+#endif  // BASIC_OPERATIONS_HPP_INCLUDED

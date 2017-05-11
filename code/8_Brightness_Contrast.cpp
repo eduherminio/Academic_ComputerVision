@@ -17,6 +17,7 @@
 #include <string>
 
 using namespace cv;
+using namespace cv_lib;
 
 
 int main( int argc, char* argv[])

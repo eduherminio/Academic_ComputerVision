@@ -18,6 +18,7 @@
 #include <cassert>
 
 using namespace cv;
+using namespace cv_lib;
 
 int main( int argc, char* argv[])
 {
@@ -146,6 +147,6 @@ int main( int argc, char* argv[])
   }
 
     waitKey(0);
-    
+
     return EXIT_SUCCESS;
 }

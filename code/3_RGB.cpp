@@ -15,6 +15,7 @@
 #include "./header/cv_library.hpp"
 
 using namespace cv;
+using namespace cv_lib;
 
 #define SAVE    true
 #define NOTSAVE false

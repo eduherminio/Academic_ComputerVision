@@ -10,15 +10,14 @@ SET(CMAKE_CXX_FLAGS "-std=c++14")
 
 find_package( OpenCV REQUIRED )
 
-#set(THREADS_PREFER_PTHREAD_FLAG ON)
-#find_package(Threads REQUIRED)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 add_executable( ${PROJECT_NAME} ${PROJECT_NAME}.cpp ${SOURCES})
 
-target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
-#target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} Threads::Threads)
+#target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
+target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} Threads::Threads)
 
-#install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
 
 # Why C++14?
 #   use of ‘auto’ in parameter declaration only available with -std=c++14

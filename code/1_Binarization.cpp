@@ -16,6 +16,7 @@
 #include <string>
 
 using namespace cv;
+using namespace cv_lib;
 
 #define SAVE    true
 #define NOTSAVE false
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
 
 
   Mat myPic_grey0, myPic_grey1, myPic_grey2, myPic_grey3, myPic_grey4;
-  
+
   threshold(myPic, myPic_grey0, _threshold, 255,0);
   show_pic(myPic_grey0, "Type0");
   threshold(myPic, myPic_grey1, _threshold, 255,1);

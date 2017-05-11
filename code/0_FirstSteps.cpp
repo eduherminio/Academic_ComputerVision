@@ -13,8 +13,8 @@
 #include "opencv2/opencv.hpp"
 #include "./header/basic_operations.hpp"
 
-using namespace std;
 using namespace cv;
+using namespace cv_lib;
 
 int main(int argc, char* argv[])
 {

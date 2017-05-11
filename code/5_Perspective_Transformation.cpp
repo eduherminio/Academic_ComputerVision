@@ -18,6 +18,7 @@
 #include <cmath>
 
 using namespace cv;
+using namespace cv_lib;
 
 void mouseEvent(int evt, int x, int y, int flags, void* param);
 
@@ -39,9 +40,9 @@ int main( int argc, char* argv[])
   double reduction_coef= 0.5;
 
   for(auto& x:v_Pic) {
-    
+
     resize(x, x, Size(), reduction_coef, reduction_coef, CV_INTER_LANCZOS4);
-  
+
     Point2f corrected_points[4], perspective_points[4];
 
     std::string window_name("Marca los 4 puntos, comenzando por el vertice superior izquierdo, y pulse una tecla");

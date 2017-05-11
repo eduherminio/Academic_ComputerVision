@@ -18,6 +18,7 @@
 #include <cassert>
 
 using namespace cv;
+using namespace cv_lib;
 
 int main( int argc, char* argv[])
 {
@@ -83,7 +84,7 @@ int main( int argc, char* argv[])
         // draw_rectangle(Pic, rect_points, BLUE);                       // Debug
 
 
-        // Translate it to the center, avoid any data loss in a future rotation
+        // Translate it to the center, avoiding any data loss in a future rotation
 
         Point2f pic_center(0.5*Pic.cols, 0.5*Pic.rows);
         float distance_to_center[2]= {pic_center.x - rotated_rect.center.x, pic_center.y-rotated_rect.center.y};
@@ -96,6 +97,8 @@ int main( int argc, char* argv[])
         // show_pic(Pic_translated, "Pic_translated");                         // Debug
         Point2f rect_points[4]; rotated_rect.points(rect_points);     // Debug
         draw_rectangle(Pic, rect_points, BLUE);                       // Debug
+
+
         // Rotate it
 
         if(circularity < min_circularity)
@@ -103,20 +106,29 @@ int main( int argc, char* argv[])
         else
           Pic_rotated= Pic_translated.clone();
 
+
+        // ROI extraction
+
         cv::Rect roi(
           distance_to_center[0] + rotated_rect.center.x - (rotated_rect.size.height / 2),     // x
           distance_to_center[1] + rotated_rect.center.y - (rotated_rect.size.width / 2),      // y
           rotated_rect.size.height + 3,                                                       // width
           roi.height = rotated_rect.size.width + 3);                                          // height
 
-
         // rectangle(Pic_rotated, roi, GREEN, 1);                              // Debug
         // show_pic(Pic_rotated, "Pic_rotated");                               // Debug
+
         // Mat _rectangle_content;                                             // Debug
         // fill_no_rectangle(Pic_rotated, _rectangle_content, roi, WHITE);     // Debug
         // show_pic(_rectangle_content, "full");                               // Debug
 
+
+        // Creation of a new Pic only with a Rect
         Pic_roi= Pic_rotated(roi).clone();
+
+
+        // Landscape mode
+
         if(num_pic!=3 && Pic_roi.rows > Pic_roi.cols) //
         {
           cv::transpose(Pic_roi, Pic_roi);      // source: http://stackoverflow.com/a/7825243/5459321
@@ -131,7 +143,7 @@ int main( int argc, char* argv[])
 
         resize(Pic_roi, Pic_roi, Size(), 2, 2, CV_INTER_LANCZOS4);
 
-        show_pic(Pic_roi, "Separated roi");
+        show_pic(Pic_roi, "Separated roi #" + std::to_string(j));
         show_pic(Pic, "Pic");
 
         waitKey(0);
