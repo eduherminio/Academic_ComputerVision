@@ -1,0 +1,7 @@
+filename="14_Object_Extraction"
+imagename1="../../Pictures/cuadradas_redondas.jpg"
+imagename2="../../Pictures/tools.jpg"
+imagename3="../../Pictures/piezas-motor.jpg"
+imagename4="../../Pictures/señales.jpg"
+imagename5=""
+

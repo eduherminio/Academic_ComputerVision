@@ -28,7 +28,8 @@
 *.out
 *.app
 
-code/build/
+build/
+
 Enunciados/
 Samples_1/
 Samples_complete/

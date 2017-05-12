@@ -1,7 +1,8 @@
 #!/bin/bash
 clear
 set -e
-../system_info.sh
+n_cores=`cat /proc/cpuinfo | grep processor | wc -l`
+let "n_cores++"
 source filedata.txt
 export env_filename=$filename
 mkdir -p build && cd build
@@ -17,20 +18,14 @@ make -j$n_cores -b
 # source filedata.txt
 #   Reads variables from filedata.txt
 
+# mkdir -p
+#   creates a folder only if it doesn't exist
+
 # &> /dev/null
 #   Suppreses output
 
-# echo $filename > filename.txt
-#   aux. file to be read by CMakeList.txt
-
-# rm filename.txt
-#   deletion of aux. file
-
-# BASEDIR=$(dirname "$0")
-#   creates BASEDIR variable to host script directory
-
-# mkdir -p
-#   creates a folder only if it doesn't exist
+# make -j N
+#   For minimum build times, you want to use a value of N that is one more than the number of cores on the machine
 
 
 #

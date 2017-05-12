@@ -20,8 +20,8 @@ using namespace cv;
 
 namespace cv_lib
 {
-  #define stringify( name ) # name  // returns a string with the name of the variable
-  #define CHL 100   // Char length
+  #define stringify(name) # name  // returns a string with the name of the variable
+  const int CHL= 100;   // Char length
 
   bool double_equals(double a, double b, double epsilon = 0.001);
 
