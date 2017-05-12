@@ -13,8 +13,6 @@
 #include <opencv2/opencv.hpp>
 #include "./header/basic_operations.hpp"
 #include "./header/cv_library.hpp"
-#include <vector>
-#include <string>
 #include <cassert>
 
 using namespace cv;

@@ -12,6 +12,8 @@
 
 #include "../header/cv_library.hpp"
 
+using namespace cv;
+
 namespace cv_lib
 {
   void grey_pic(const Mat& Pic_original, Mat& Pic_grey)    {

@@ -13,6 +13,8 @@
 #include "../header/basic_operations.hpp"
 #include <string>
 
+using namespace cv;
+
 namespace cv_lib
 {
   bool double_equals(double a, double b, double epsilon)
