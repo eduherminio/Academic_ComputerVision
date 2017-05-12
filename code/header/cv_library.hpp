@@ -14,8 +14,8 @@
 #define CV_LIBRARY_HPP_INCLUDED
 
 #include "opencv2/opencv.hpp"
-#include "headers.hpp"
-#include "basic_operations.hpp"   // show_pic used in some functions
+#include "cv_headers.hpp"
+#include "cv_basic_operations.hpp"   // show_pic used in some functions
 
 
 namespace cv_lib
