@@ -10,7 +10,7 @@
  */
 
 
-#include "../header/basic_operations.hpp"
+#include "../header/cv_basic_operations.hpp"
 #include <string>
 
 using namespace cv;

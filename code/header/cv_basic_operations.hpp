@@ -14,7 +14,7 @@
 #define BASIC_OPERATIONS_HPP_INCLUDED
 
 #include "opencv2/opencv.hpp"
-#include "headers.hpp"
+#include "cv_headers.hpp"
 
 namespace cv_lib
 {
