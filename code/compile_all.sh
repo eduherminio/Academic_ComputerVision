@@ -7,7 +7,8 @@ mkdir -p build && cd build
 
 
 for i in `find ../filedata/ -name '*_filedata.txt' | sort`
-	do source $i
+do
+	source $i
 	export env_filename=$filename
 	cmake ..  &> /dev/null
 	make -j$n_cores -b

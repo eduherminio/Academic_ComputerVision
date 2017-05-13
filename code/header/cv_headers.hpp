@@ -5,6 +5,8 @@
 
 #define stringify(name) # name  // returns a string with the name of the variable
 
+const int CHL= 100;   // Char length
+
 const int MAX_HEIGHT    (512);
 const int MAX_WIDTH     (1024);
 

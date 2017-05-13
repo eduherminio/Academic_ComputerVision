@@ -18,8 +18,6 @@
 
 namespace cv_lib
 {
-  const int CHL= 100;   // Char length
-
   bool double_equals(double a, double b, double epsilon = 0.001);
 
   int init_pic(const int& argc, char* argv[], std::string& strpicName,              cv::Mat& myPic);
