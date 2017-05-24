@@ -63,6 +63,23 @@ namespace cv_lib
     }
   }
 
+  void HSV_pic(const Mat& Pic_BGR, Mat& Pic_HSV)    {
+    if((Pic_BGR.channels())==3)  {
+      cvtColor(Pic_BGR, Pic_HSV, CV_BGR2HSV);
+    }
+    else
+      assert(0 && "Pic channels != 3");
+  }
+
+  void HSV_pic(const std::vector<Mat>& v_Pic_BGR, std::vector<Mat>& v_Pic_HSV)    {
+    v_Pic_HSV.resize(v_Pic_BGR.size());
+
+    for(int i=0; i<v_Pic_BGR.size(); ++i)
+    {
+      HSV_pic(v_Pic_BGR[i], v_Pic_HSV[i]);
+    }
+  }
+
   void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
     Mat binPic= myPic.clone();
 

@@ -45,6 +45,11 @@ namespace cv_lib
   void th_pic(const cv::Mat& Pic_original, cv::Mat& Pic_th, const int _th=125, const int type= CV_THRESH_BINARY_INV | CV_THRESH_OTSU);
   void th_pic(const std::vector<cv::Mat>& v_Pic_original, std::vector<cv::Mat>& v_Pic_th, const int _th=125, const int type= CV_THRESH_BINARY_INV | CV_THRESH_OTSU);
 
+
+  void HSV_pic(const cv::Mat& Pic_BGR,                 cv::Mat& Pic_HSV);
+  void HSV_pic(const std::vector<cv::Mat>& v_Pic_BGR,  std::vector<cv::Mat>& v_Pic_HSV);
+
+
   void rescale_pic(const cv::Mat& Pic_original, cv::Mat& Pic_rescaled, const float coef);
   void rescale_pic(const cv::Mat& Pic_original, cv::Mat& Pic_rescaled, const float coef_x, const float coef_y);
 
