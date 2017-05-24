@@ -85,6 +85,43 @@ namespace cv_lib
     return 0;
   }
 
+  int load_from_folder(const std::string relative_path, std::vector<std::string>& v_picName, std::vector<Mat>& v_Pic)
+  {
+    int return_value= 0;
+
+    std::vector<cv::String> v_paths;
+    cv::String _pattern(relative_path);
+    cv::glob(_pattern, v_paths);
+
+    v_Pic.reserve(v_paths.size());
+    v_picName.reserve(v_paths.size());
+
+    for(unsigned i=0; i<v_paths.size(); ++i)
+    {
+      Mat myPic= imread(v_paths[i], CV_LOAD_IMAGE_UNCHANGED);
+
+      if(myPic.empty())
+      {
+        std::cout<<"Error opening picture file "<<v_paths[i]<<std::endl;
+        // return -1;
+        return_value=-1;
+        continue;
+      }
+      v_Pic.push_back(myPic);
+
+      char chpicName[CHL];
+      strcpy(chpicName, v_paths[i].c_str());
+
+      std::string picName(chpicName);
+
+      int n= picName.find("Pictures/");
+      picName.erase(picName.begin(), picName.begin() + n+9);
+      v_picName.push_back(picName);
+    }
+
+    return return_value;
+  }
+
   void print_info(const Mat& myPic) {
     print_info(myPic, "Unknown name");
   }

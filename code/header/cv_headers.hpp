@@ -8,7 +8,7 @@
 const int CHL= 100;   // Char length
 
 const int MAX_HEIGHT    (512);
-const int MAX_WIDTH     (1024);
+const int MAX_WIDTH     (860);
 
 const int HISTO_SIZE    (256);     // 256 grey levels
 const int HISTO_WIDTH   (1024);    // 4 units/level
