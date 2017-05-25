@@ -22,6 +22,7 @@ namespace cv_lib
 
   int init_pic(const int& argc, char* argv[], std::string& strpicName,              cv::Mat& myPic);
   int init_pic(const int& argc, char* argv[], std::vector<std::string>& strpicName, std::vector<cv::Mat>& myPic);
+  
   int load_from_folder(const std::string relative_path, std::vector<std::string>& v_picName, std::vector<cv::Mat>& v_Pic);
 
   void print_info(const cv::Mat& myPic);

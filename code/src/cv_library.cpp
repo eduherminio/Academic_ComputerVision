@@ -80,8 +80,8 @@ namespace cv_lib
     }
   }
 
-  void manual_binarize(const Mat& myPic, const int threshold, const bool save) {
-    Mat binPic= myPic.clone();
+  void manual_binarize(const Mat& myPic, Mat& binPic, const int threshold) {
+    binPic= myPic.clone();
 
     for(int i=0; i<binPic.rows; i++)
     {
@@ -96,15 +96,6 @@ namespace cv_lib
         // std::cout<<grey_level<<" ";
       }
       // std::cout<<std::endl;
-    }
-
-    show_pic(binPic, "Black& White");
-
-    if(save== true)
-    {
-     std::string newName(stringify(myPic));
-      newName += "_B&W.jpg";  // Fundamental to add the extension
-      imwrite(newName, binPic);
     }
   }
 
@@ -327,7 +318,8 @@ namespace cv_lib
       Pic_src,
       contours,
       // std::vector<Vec4i> hierarchy; // Optional in OpenCV 3.2
-      CV_RETR_EXTERNAL,
+      CV_RETR_EXTERNAL,    // TO-CHECK
+      // CV_RETR_LIST,
       CV_CHAIN_APPROX_NONE
       // 	Point  	offset = Point()
     );
@@ -559,6 +551,114 @@ namespace cv_lib
     }
 
     show_pic(drawing, "Colored contours");
+  }
+
+  bool template_matching(const cv::Mat& pic, const cv::Rect& roi, const cv::Mat& templ, const int match_method, const int n)
+  {
+    // Mat fixed_original= pic.clone();
+    Mat aux_pic=pic.clone();
+
+    rectangle(aux_pic, roi, WHITE, 1);
+    fill_no_rectangle(pic, aux_pic, roi, WHITE);
+    // show_pic(aux_pic);
+
+    Mat comparer= templ.clone();
+    do {
+      rescale_pic(comparer, comparer, 0.8);
+    } while( aux_pic.size().height+5 < comparer.size().height || aux_pic.size().width+5 < comparer.size().width);
+
+    waitKey();
+    double coef_correlation=0;
+
+    grey_pic(comparer, comparer);
+    th_pic(comparer, comparer, 100, CV_THRESH_BINARY);
+
+    while(true)
+    {
+      Mat original= aux_pic.clone();
+
+      if(coef_correlation >0.75)
+      {
+        std::cout<<"Match!"<<std::endl;
+        return true;
+      }
+      else if(n*comparer.rows < original.rows || n*comparer.cols < original.rows)
+        return false;
+
+      // show_pic(original, "or");
+      // show_pic(comparer, "comparer");
+      waitKey();
+
+      Mat result;
+      int result_cols =  original.cols - comparer.cols + 1;
+      int result_rows = original.rows - comparer.rows + 1;
+      result.create( result_rows, result_cols, CV_32FC1 );
+
+      matchTemplate( original, comparer, result, match_method );
+      //  normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
+      // cv_lib::show_pic(result, "Result");
+
+      /// Localizing the best match with minMaxLoc
+      double minVal, maxVal;
+      Point minLoc,maxLoc,matchLoc;
+
+      minMaxLoc( result, &minVal, &maxVal, &minLoc, &maxLoc, Mat() );
+
+      /// For SQDIFF and SQDIFF_NORMED, the best matches are lower values. For all the other methods, the higher the better
+      if( match_method  == CV_TM_SQDIFF || match_method == CV_TM_SQDIFF_NORMED )
+        matchLoc = minLoc;
+      else
+        matchLoc = maxLoc;
+
+      rectangle( original, matchLoc, Point( matchLoc.x + comparer.cols , matchLoc.y + comparer.rows ), Scalar::all(125), 2, 8, 0 );
+      rectangle( result, matchLoc, Point( matchLoc.x + comparer.cols , matchLoc.y + comparer.rows ), Scalar::all(125), 2, 8, 0 );
+
+      show_pic(original, "original");
+      // show_pic(result, "new result");
+
+      Rect r_isolated(matchLoc, Point( matchLoc.x + comparer.cols , matchLoc.y + comparer.rows ));
+
+      Mat pic_isolated= aux_pic(r_isolated).clone();
+      // imshow("Region", pic_isolated);
+
+      coef_correlation=cv_lib::match_percentage(pic_isolated, comparer);
+      std::cout<<std::fixed<<std::setprecision(2)<<coef_correlation<<"%"<<std::endl;
+
+      cv_lib::rescale_pic(comparer, comparer, 0.9);
+
+      waitKey(0);
+    }
+  }
+
+  double match_percentage(const Mat& Pic1, const Mat& Pic2)
+  {
+    show_pic(Pic1, "cmp1");
+    show_pic(Pic2, "cmp2");
+    Mat result;
+    cv::absdiff(Pic1, Pic2, result);
+    grey_pic(result, result);
+    manual_binarize(result, result, 100);
+
+    unsigned black_level, n_black_pixels=0;
+    for(unsigned i=0; i<result.rows; ++i)      // from low to high
+    {
+      uchar *p_row= result.ptr<uchar>(i);
+      for(unsigned j=0; j<result.cols; ++j)  // from left to right
+      {
+        black_level= p_row[j];
+        // std::cout<<i<<" "<<j<<" "<<grey_level<<std::endl;
+        if(black_level==0)  {
+          n_black_pixels++;
+        }
+      }
+    }
+
+    double match_percentage= static_cast<double> (n_black_pixels) / ( static_cast<double>(result.rows*result.cols));
+
+    // std::cout<<match_percentage<<"%"<<std::endl;
+    show_pic(result, "Comparing");
+
+    return match_percentage;
   }
 
 }

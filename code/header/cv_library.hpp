@@ -40,15 +40,13 @@ namespace cv_lib
   void color_pic(const cv::Mat& Pic_original,         cv::Mat& Pic_color);
   void color_pic(const std::vector<cv::Mat>& v_Pic,   std::vector<cv::Mat>& v_Pic_color);
 
-  void manual_binarize(const cv::Mat& myPic, const int threshold, const bool save);
+  void manual_binarize(const cv::Mat& myPic, cv::Mat& binPic, const int threshold);
 
   void th_pic(const cv::Mat& Pic_original, cv::Mat& Pic_th, const int _th=125, const int type= CV_THRESH_BINARY_INV | CV_THRESH_OTSU);
   void th_pic(const std::vector<cv::Mat>& v_Pic_original, std::vector<cv::Mat>& v_Pic_th, const int _th=125, const int type= CV_THRESH_BINARY_INV | CV_THRESH_OTSU);
 
-
   void HSV_pic(const cv::Mat& Pic_BGR,                 cv::Mat& Pic_HSV);
   void HSV_pic(const std::vector<cv::Mat>& v_Pic_BGR,  std::vector<cv::Mat>& v_Pic_HSV);
-
 
   void rescale_pic(const cv::Mat& Pic_original, cv::Mat& Pic_rescaled, const float coef);
   void rescale_pic(const cv::Mat& Pic_original, cv::Mat& Pic_rescaled, const float coef_x, const float coef_y);
@@ -100,6 +98,8 @@ namespace cv_lib
   void brightness_contrast_trackbar (int, void* userdata);
   void thresh_trackbar              (int, void* userdata);
 
+  bool template_matching(const cv::Mat& pic, const cv::Rect& roi, const cv::Mat& templ, const int match_method= CV_TM_CCORR_NORMED, const int n=10);
+  double match_percentage(const cv::Mat& Pic1, const cv::Mat& Pic2);
 }
 
 #endif // CV_LIBRARY_HPP_INCLUDED

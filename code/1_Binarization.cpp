@@ -31,8 +31,8 @@ int main(int argc, char* argv[])
   show_pic(myPic, "Originalpicture");
 
   int _threshold= 100;
-
-  manual_binarize(myPic, _threshold, SAVE);
+  Mat aux_Pic;
+  manual_binarize(myPic, aux_Pic, _threshold);    // TO-CHECK
 
 
   Mat myPic_grey0, myPic_grey1, myPic_grey2, myPic_grey3, myPic_grey4;
