@@ -116,13 +116,15 @@ namespace cv_lib
   }
 
   void fix_size(Mat& Pic, const int max_height, const int max_width)  {   // def max_height= MAX_HEIGHT, def max_width= MAX_WIDTH
-    fix_size(Pic, Pic, max_height, max_width);
+    Mat Pic_aux= Pic.clone();
+    fix_size(Pic, Pic_aux, max_height, max_width);
   }
 
   void fix_size(std::vector<Mat>& v_Pic, const int max_height, const int max_width)  {  // def max_height= MAX_HEIGHT, def max_width= MAX_WIDTH
     for(auto& Pic: v_Pic)
     {
-      fix_size(Pic, Pic, max_height, max_width);
+      Mat Pic_aux= Pic.clone();
+      fix_size(Pic, Pic_aux, max_height, max_width);
     }
   }
 
@@ -140,7 +142,8 @@ namespace cv_lib
   }
 
   void rotate_pic(Mat& Pic, const Point2f center, const double angle) {
-    rotate_pic(Pic, Pic, center, angle);
+    Mat aux_pic= Pic.clone();
+    rotate_pic(Pic, aux_pic, center, angle);
   }
 
   void draw_rectangle(Mat& Pic, const Point2f (&vertices)[4], const Scalar color, const int thickness, const cv::LineTypes linetype)  {    // def. color: BLACK, def. thickenss: 1, def. linetype= LINE_8
@@ -234,7 +237,8 @@ namespace cv_lib
   }
 
   void fill_no_rectangle(Mat& Pic, const Rect& _rectangle, const Scalar& color)  {   // def. color: BLACK
-    fill_no_rectangle(Pic, Pic, _rectangle, color);
+    Mat Pic_aux= Pic.clone()
+    fill_no_rectangle(Pic, Pic_aux, _rectangle, color);
   }
 
   void fill_no_rectangles(const Mat& Pic_original, Mat& Pic_clean, const std::vector<Rect>& v_rectangle, const Scalar& color)  {   // def. color: BLACK
@@ -329,7 +333,8 @@ namespace cv_lib
   }
 
   void create_contours(Mat& Pic, std::vector<std::vector<Point>>& contours)   {
-    create_contours(Pic, Pic, contours);
+    Mat Pic_aux= Pic.clone();
+    create_contours(Pic, Pic_aux, contours);
   }
 
   int count_objects(const Mat& Pic, Mat& Pic_dst) {
@@ -555,12 +560,9 @@ namespace cv_lib
 
   bool template_matching(const cv::Mat& pic, const cv::Rect& roi, const cv::Mat& templ, const int match_method, const int n)
   {
-    // Mat fixed_original= pic.clone();
     Mat aux_pic=pic.clone();
-
     rectangle(aux_pic, roi, WHITE, 1);
     fill_no_rectangle(pic, aux_pic, roi, WHITE);
-    // show_pic(aux_pic);
 
     Mat comparer= templ.clone();
     do {
