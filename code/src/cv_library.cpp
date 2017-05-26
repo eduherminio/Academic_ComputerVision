@@ -237,7 +237,7 @@ namespace cv_lib
   }
 
   void fill_no_rectangle(Mat& Pic, const Rect& _rectangle, const Scalar& color)  {   // def. color: BLACK
-    Mat Pic_aux= Pic.clone()
+    Mat Pic_aux= Pic.clone();
     fill_no_rectangle(Pic, Pic_aux, _rectangle, color);
   }
 
@@ -328,7 +328,8 @@ namespace cv_lib
       // 	Point  	offset = Point()
     );
     drawContours(Pic_dst, contours, 0, Scalar(255), CV_FILLED);
-    std::cout << "Located regions: " <<  contours.size() << std::endl;
+
+    // std::cout << "Located regions: " <<  contours.size() << std::endl;
     // show_pic(Pic_dst);
   }
 
@@ -558,7 +559,7 @@ namespace cv_lib
     show_pic(drawing, "Colored contours");
   }
 
-  bool template_matching(const cv::Mat& pic, const cv::Rect& roi, const cv::Mat& templ, const int match_method, const int n)
+  bool template_matching(const cv::Mat& pic, const cv::Rect& roi, const cv::Mat& templ, const double coef_correlation,  const int match_method, const double reduction_coef, const int size_difference)
   {
     Mat aux_pic=pic.clone();
     rectangle(aux_pic, roi, WHITE, 1);
@@ -566,11 +567,10 @@ namespace cv_lib
 
     Mat comparer= templ.clone();
     do {
-      rescale_pic(comparer, comparer, 0.8);
-    } while( aux_pic.size().height+5 < comparer.size().height || aux_pic.size().width+5 < comparer.size().width);
+      rescale_pic(comparer, comparer, reduction_coef);
+    } while( aux_pic.size().height < comparer.size().height + 5 || aux_pic.size().width < comparer.size().width + 5);
 
-    waitKey();
-    double coef_correlation=0;
+    double found_correlation=0;
 
     grey_pic(comparer, comparer);
     th_pic(comparer, comparer, 100, CV_THRESH_BINARY);
@@ -579,26 +579,22 @@ namespace cv_lib
     {
       Mat original= aux_pic.clone();
 
-      if(coef_correlation >0.75)
+      if(found_correlation >coef_correlation)
       {
-        std::cout<<"Match!"<<std::endl;
+        // std::cout<<"Match!"<<std::endl;
         return true;
       }
-      else if(n*comparer.rows < original.rows || n*comparer.cols < original.rows)
+      else if(size_difference*comparer.rows < original.rows || size_difference*comparer.cols < original.rows)
         return false;
 
       // show_pic(original, "or");
-      // show_pic(comparer, "comparer");
-      waitKey();
 
       Mat result;
-      int result_cols =  original.cols - comparer.cols + 1;
+      int result_cols =  original.rows - comparer.rows + 1;
       int result_rows = original.rows - comparer.rows + 1;
       result.create( result_rows, result_cols, CV_32FC1 );
 
       matchTemplate( original, comparer, result, match_method );
-      //  normalize( result, result, 0, 1, NORM_MINMAX, -1, Mat() );
-      // cv_lib::show_pic(result, "Result");
 
       /// Localizing the best match with minMaxLoc
       double minVal, maxVal;
@@ -615,27 +611,25 @@ namespace cv_lib
       rectangle( original, matchLoc, Point( matchLoc.x + comparer.cols , matchLoc.y + comparer.rows ), Scalar::all(125), 2, 8, 0 );
       rectangle( result, matchLoc, Point( matchLoc.x + comparer.cols , matchLoc.y + comparer.rows ), Scalar::all(125), 2, 8, 0 );
 
-      show_pic(original, "original");
-      // show_pic(result, "new result");
 
       Rect r_isolated(matchLoc, Point( matchLoc.x + comparer.cols , matchLoc.y + comparer.rows ));
 
       Mat pic_isolated= aux_pic(r_isolated).clone();
-      // imshow("Region", pic_isolated);
 
-      coef_correlation=cv_lib::match_percentage(pic_isolated, comparer);
-      std::cout<<std::fixed<<std::setprecision(2)<<coef_correlation<<"%"<<std::endl;
+      found_correlation=cv_lib::match_percentage(pic_isolated, comparer);
 
-      cv_lib::rescale_pic(comparer, comparer, 0.9);
+      cv_lib::rescale_pic(comparer, comparer, reduction_coef);
 
-      waitKey(0);
+      // std::cout<<std::fixed<<std::setprecision(2)<<found_correlation<<"%"<<std::endl;      // FOR DEBUGGING
+      // show_pic(original, "original");
+      // show_pic(comparer, "comparer");
+      // waitKey(0);
     }
   }
 
   double match_percentage(const Mat& Pic1, const Mat& Pic2)
   {
-    show_pic(Pic1, "cmp1");
-    show_pic(Pic2, "cmp2");
+    // show_pic(Pic2, "cmp2");
     Mat result;
     cv::absdiff(Pic1, Pic2, result);
     grey_pic(result, result);
@@ -657,8 +651,7 @@ namespace cv_lib
 
     double match_percentage= static_cast<double> (n_black_pixels) / ( static_cast<double>(result.rows*result.cols));
 
-    // std::cout<<match_percentage<<"%"<<std::endl;
-    show_pic(result, "Comparing");
+    // show_pic(result, "Comparing");     // FOR DEBUGGING
 
     return match_percentage;
   }

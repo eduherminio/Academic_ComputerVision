@@ -98,7 +98,8 @@ namespace cv_lib
   void brightness_contrast_trackbar (int, void* userdata);
   void thresh_trackbar              (int, void* userdata);
 
-  bool template_matching(const cv::Mat& pic, const cv::Rect& roi, const cv::Mat& templ, const int match_method= CV_TM_CCORR_NORMED, const int n=10);
+  bool template_matching(const cv::Mat& pic, const cv::Rect& roi, const cv::Mat& templ, const double coef_correlation=0.75, const int match_method= CV_TM_CCORR_NORMED, const double reduction_coef=0.9, const int size_difference=10);
+
   double match_percentage(const cv::Mat& Pic1, const cv::Mat& Pic2);
 }
 
