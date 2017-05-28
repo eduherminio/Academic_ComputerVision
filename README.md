@@ -1,7 +1,6 @@
 # Academic_ComputerVision
-<p align="center">
-**&lt;WIP>**
-</p>
+
+OpenCV (C++) wrapper library and basic Computer Vision programs.
 
 Code developed for academic purposes in 2017.
 
