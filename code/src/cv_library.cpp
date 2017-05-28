@@ -322,7 +322,7 @@ namespace cv_lib
       Pic_src,
       contours,
       // std::vector<Vec4i> hierarchy; // Optional in OpenCV 3.2
-      CV_RETR_EXTERNAL,    // TO-CHECK
+      CV_RETR_EXTERNAL,    // TO-DO: make this default option, but let user choose
       // CV_RETR_LIST,
       CV_CHAIN_APPROX_NONE
       // 	Point  	offset = Point()
