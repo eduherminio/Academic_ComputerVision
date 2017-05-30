@@ -50,19 +50,6 @@ namespace cv_lib
     }
   }
 
-  void th_pic(const Mat& Pic_original, Mat& Pic_th, const int _th, const int type) {  // def. type: OTSU, def. th: 125
-    threshold(Pic_original, Pic_th, _th, 255, type);
-  }
-
-  void th_pic(const std::vector<Mat>& v_Pic_original, std::vector<Mat>& v_Pic_th, const int _th, const int type) {  // def. type: OTSU, def. _th: 125
-    v_Pic_th.resize(v_Pic_original.size());
-
-    for(int i=0; i<v_Pic_original.size(); ++i)
-    {
-      th_pic(v_Pic_original[i], v_Pic_th[i], _th, type);
-    }
-  }
-
   void HSV_pic(const Mat& Pic_BGR, Mat& Pic_HSV)    {
     if((Pic_BGR.channels())==3)  {
       cvtColor(Pic_BGR, Pic_HSV, CV_BGR2HSV);
@@ -77,6 +64,19 @@ namespace cv_lib
     for(int i=0; i<v_Pic_BGR.size(); ++i)
     {
       HSV_pic(v_Pic_BGR[i], v_Pic_HSV[i]);
+    }
+  }
+
+  void th_pic(const Mat& Pic_original, Mat& Pic_th, const int _th, const int type) {  // def. type: OTSU, def. th: 125
+    threshold(Pic_original, Pic_th, _th, 255, type);
+  }
+
+  void th_pic(const std::vector<Mat>& v_Pic_original, std::vector<Mat>& v_Pic_th, const int _th, const int type) {  // def. type: OTSU, def. _th: 125
+    v_Pic_th.resize(v_Pic_original.size());
+
+    for(int i=0; i<v_Pic_original.size(); ++i)
+    {
+      th_pic(v_Pic_original[i], v_Pic_th[i], _th, type);
     }
   }
 
